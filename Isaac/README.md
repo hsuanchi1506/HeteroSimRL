@@ -1,8 +1,8 @@
 # Isaac / PhysX
 
-Homo and Hetero versions of the official Isaac Lab Factory tasks (PegInsert, GearMesh, NutThread), following `../RULES.md`. Chinese version: [README.zh-TW.md](README.zh-TW.md). Results: [results/README.md](results/README.md).
+Homo and Hetero versions of the official Isaac Lab Factory tasks (PegInsert, GearMesh, NutThread) and of the four Play2Perfect assembly tasks, following `../RULES.md`. Chinese version: [README.zh-TW.md](README.zh-TW.md). Results: [results/README.md](results/README.md).
 
-## Status (2026-10-08)
+## Status (2026-10-10)
 
 - **Done**:
   - The union-scene environment, shared by Homo and Hetero.
@@ -10,10 +10,9 @@ Homo and Hetero versions of the official Isaac Lab Factory tasks (PegInsert, Gea
   - Hetero/Homo training at 128 envs: official Hetero with 3 seeds, the other two groups with 5 seeds each.
   - RULES section 6 with trained policies at 3 / 128 / 4096 envs: contacts, contact phases and waiting.
   - Section 7: reading the PhysX source.
-- **Running** on gputw1:
-  - The RULES "run once" set (`rules_*`): 128 envs done, 3 and 4096 envs in progress.
   - The TODOs from the 2026-10-07 meeting: advantage normalisation for Homo, splitting the simulation over processes, finer profiling.
-- **Not yet**: Homo/Hetero on Play2Perfect. Its official example already runs on gputw1.
+  - The RULES "run once" set (`rules_*`) at 128, 3 and 4096 envs, with periodic evaluation and videos.
+- **Play2Perfect** (2026-10-13): Homo/Hetero trained (one seed). Hetero finished; Homo runs out of GPU memory at the official scale (kept as a result). See [Play2Perfect](#play2perfect-in-progress) and [results/README.md](results/README.md).
 
 ## Setup
 
@@ -176,6 +175,77 @@ MUJOCO_GL=egl python ../HeteroSimRL/Isaac/scripts/render_offline.py runs/video/h
 - One row per task, 3 tiles per row (240 × 180 each); a tile turns green on success.
 - On a machine with a working driver, `--renderer rtx --enable_cameras` renders in Isaac Sim directly.
 - Videos are never recorded during timing or profiling.
+
+## Play2Perfect (in progress)
+
+Homo and Hetero versions of the four Play2Perfect assembly tasks (tight insertion, beam assembly steps 1 and 2, screwing). Code in `hetero_p2p/`. It runs in Play2Perfect's own environment (Isaac Lab 2.3.2.post1, the repository's rl_games with SAPG), from the Play2Perfect folder.
+
+**The official stage 2.** Each task is finetuned on its own, starting from the released stage-1 ("play") policy. The YAML files leave the size open, but the released stage-2 checkpoints fix it: all four used 12,288 envs in 6 SAPG blocks of 2,048 (their saved rollouts hold 12,288 envs, whose block column takes 6 values on 2,048 envs each), and count epochs from 0, i.e. the play weights were loaded without resuming its counters. Those are the defaults here. The YAML's block size (4,096) gives only 3 blocks, and the play policy, which has 6, does not load.
+
+**Union scene**, as for Factory:
+
+- Every env holds the four tasks' objects, receptive parts (holes) and goal markers.
+- Holes and markers are kinematic. When parked they wait below the table (z = -1 m), as the official env hides the hole of its random-goal envs.
+- Objects are dynamic. When parked they hang 2.5-4 m up, held by an upward force equal to their weight, so they touch nothing. Their pose is rewritten at every reset, so float rounding cannot make them drift.
+- `ActiveRigidObject` stands in for the official `env.object` / `env.hole` / `env.goal_viz`. Reads return each env's task's part; writes go to that part only. So the official observation, reward, reset and termination code runs unchanged.
+- Per-env values come from the official problem registry, never copied by hand: object scale (an observation), hole height, sub-goal poses (padded to 10, the screwing count), sub-goal count, object mass.
+
+**Policy input**: a task one-hot (4 values) is appended to the policy and critic inputs, before SAPG's block column. The released play checkpoint is widened with zero weights for it, so its outputs are unchanged (checked: identical).
+
+**Task assignment**:
+
+- Hetero: env i runs task i % 4 for the whole run. Envs reset one by one in this env, so no rotation is needed, and every SAPG block holds every task equally.
+- Homo: every env runs one task. The task changes every 40 epochs (640 steps, about one episode) at a rollout boundary; the cut episodes are counted apart.
+
+| File | Contents |
+|---|---|
+| `hetero_p2p/problem_table.py` | The four problems' values from the official registry, as per-task tensors |
+| `hetero_p2p/active_views.py` | `ActiveRigidObject`: the active part per env; parking; anti-gravity force for parked objects |
+| `hetero_p2p/p2p_env_cfg.py`, `p2p_env.py` | The union-scene env: subclasses the official `PreciseAssemblyEnv`; changes marked `HETERO` |
+| `hetero_p2p/checkpoint_utils.py` | Widens a released checkpoint for the one-hot (zero weights) |
+| `hetero_p2p/train_utils.py` | Per-epoch metrics (episodes per task and SAPG block), light checkpoints, Homo switching |
+| `scripts/train_p2p.py` | Training, adapted from Play2Perfect's `isaacsimenvs/train.py` |
+| `scripts/eval_p2p.py` | Per-task success with the official offline method (first episode per env, deterministic, randomisation off) |
+| `scripts/check_p2p_env.py` | Checks: parking, active parts, Homo switch |
+| `scripts/plot_p2p.py` | Success and return per task vs env steps and wall-clock (all envs or SAPG's last block) |
+| `hetero_p2p/pose_record_p2p.py`, `scripts/record_video_p2p.py` | Videos as for Factory: poses from PhysX (parked parts hidden), drawn by `render_offline.py --ground_z 0`. The mesh export now also reads USD boxes, cylinders and spheres (Play2Perfect's table, L-peg and hole are boxes) |
+
+```bash
+cd ~/HeteroSimRL/Isaac && python -m hetero_p2p.checkpoint_utils     ~/play2perfect/pretrained_policy/model.pth ~/runs/p2p_ckpt/play_onehot4.pth --n_new 4
+cd ~/play2perfect
+python ~/HeteroSimRL/Isaac/scripts/train_p2p.py --headless --mode hetero --epochs <N>     --checkpoint ~/runs/p2p_ckpt/play_onehot4.pth --save_every 250
+python ~/HeteroSimRL/Isaac/scripts/train_p2p.py --headless --mode homo --block 40 --epochs <N>     --checkpoint ~/runs/p2p_ckpt/play_onehot4.pth --save_every 250
+python ~/HeteroSimRL/Isaac/scripts/eval_p2p.py --headless --checkpoint <run>/light/ep<N>.pth --out <file>.json
+```
+
+Checked so far (2026-10-09, CPU physics, 24 envs; the GPU was busy with timed Factory runs):
+
+- The widened play policy gives exactly the released one's actions, action noise, values and LSTM states.
+- The scene builds; inputs are 144 (policy) and 166 (critic) values; the one-hot matches each env's task; sub-goal counts are 2 / 2 / 2 / 10.
+- Parked objects stay within 0.1 µm of their spots over 60 steps.
+- A Homo switch moves every env to the next task and updates the one-hot, sub-goal count and object scale; Homo rollouts hold one task.
+- Training runs and writes metrics and checkpoints.
+- Not checkable on CPU: PhysX's CPU pipeline does not keep a pose written to a kinematic body (the table and holes jump back), so where the active parts end up must be checked on GPU.
+
+Checked on GPU (2026-10-10):
+
+- Parked parts stay put; active holes sit on the table (z about 0.53 m) and active objects rest on the table or hole; the Homo switch works.
+- **The four released assembly policies, widened for the one-hot and run in the union scene with the official offline method (1,024 envs per task), reproduce the official numbers**:
+
+  | Task | Union scene | Official (`eval_offline.py`, same machine) |
+  |---|---|---|
+  | Tight insertion | 95.9% | 96.9% |
+  | Beam assembly, step 1 | 97.3% | 97.1% |
+  | Beam assembly, step 2 | 92.3% | 92.2% |
+  | Screwing | 61.0% | 61.4% |
+
+  Each released policy succeeds only on its own task (0-25% on the others).
+- Videos of two released policies: tables, fixtures and parts in place; pegs inserted, legs screwed in.
+- Speed at 12,288 envs (simulation time of one 16-step rollout): Homo tight insertion about 1.0 s, beam step 1 about 2.2 s, beam step 2 about 1.5 s, screwing 8.5-11.6 s; Hetero about 9 s. **The mixed batch is as slow as its slowest task (screwing)**, as Factory at small scale, but here that is about 2.4 times the Homo mean (Factory: +11%). Scene build about 11 min; GPU memory up to about 48 GB.
+
+Training (2026-10-10 to 10-13; results in [results/README.md](results/README.md)): Hetero and Homo, 10,000 epochs each (2.0e9 env steps, about 2,500 single-task epochs per task; the released per-task finetunes ran 7,000-14,000 epochs and reached their success within 2-5 h, about 1,100-2,700 epochs), then the official offline evaluation every 2,000 epochs and videos.
+
+Changes to the official stage 2: the task one-hot (and the widened checkpoint); the union scene and parking; a fixed number of epochs (the official config runs until stopped).
 
 ## Open team questions
 

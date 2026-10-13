@@ -1,18 +1,17 @@
 # Isaac / PhysX（中文版）
 
-Isaac Lab 官方 Factory 三個任務（插銷、齒輪、螺帽）的 Homo／Hetero 版本，照 `../RULES.md` 做。英文版：[README.md](README.md)。結果：[results/README.zh-TW.md](results/README.zh-TW.md)。
+Isaac Lab 官方 Factory 三個任務（插銷、齒輪、螺帽）和 Play2Perfect 四個組裝任務的 Homo／Hetero 版本，照 `../RULES.md` 做。英文版：[README.md](README.md)。結果：[results/README.zh-TW.md](results/README.zh-TW.md)。
 
-## 狀態（2026-10-08）
+## 狀態（2026-10-10）
 
 - **做完**：
   - 聯集場景的環境（Homo 和 Hetero 共用）、訓練、評估、梯度分析、錄影、計時和剖析的程式。
   - 128 個環境的 Hetero／Homo 訓練：官方 Hetero 3 個種子，另外兩組各 5 個種子。
   - RULES 第 6 節：用訓練好的策略，在 3、128、4096 個環境記接觸、階段、等待。
   - 第 7 節：讀 PhysX 原始碼。
-- **正在跑**（gputw1）：
-  - RULES「每個實驗跑一次」的正式版（`rules_*`）：128 個環境已完成，3 和 4096 個環境進行中。
   - 10/07 開會的 TODO：Homo 的 advantage 標準化、分散算力、更細的剖析。
-- **還沒做**：Play2Perfect 的 Homo／Hetero。官方範例已經能在 gputw1 上跑。
+  - RULES「每個實驗跑一次」的正式版（`rules_*`）：128、3、4096 個環境，含定期評估和影片。
+- **Play2Perfect**（2026-10-13）：Homo／Hetero 訓練過（一個種子）。Hetero 跑完；Homo 在官方規模下 GPU 記憶體不夠、跑不完，當成結果。見 [Play2Perfect](#play2perfect進行中)。
 
 ## 環境
 
@@ -172,6 +171,71 @@ MUJOCO_GL=egl python ../HeteroSimRL/Isaac/scripts/render_offline.py runs/video/h
 - 一列一個任務，每列 3 格（每格 240×180），達到成功條件時邊框變綠。
 - 驅動正常的機器可以用 `--renderer rtx --enable_cameras` 直接用 Isaac Sim 算圖。
 - 計時和剖析的時候不錄影。
+
+## Play2Perfect（進行中）
+
+Play2Perfect 四個組裝任務（緊配合插入、橫樑組裝第一步和第二步、鎖螺絲）的 Homo／Hetero 版本，程式在 `hetero_p2p/`。用 Play2Perfect 自己的環境跑（Isaac Lab 2.3.2.post1、repo 自帶有 SAPG 的 rl_games），在 Play2Perfect 的資料夾裡執行。
+
+**官方第二階段怎麼做**：每個任務從釋出的第一階段（「玩」）策略開始，各自微調。YAML 沒寫清楚規模，但釋出的第二階段存檔寫得很清楚：四個都是 12,288 個環境、SAPG 6 組、每組 2048（存檔裡最後一次收集有 12,288 個環境，SAPG 那一欄有 6 個值、各 2048 個環境），而且輪數從 0 算，也就是只載入「玩」的權重，沒有接續它的計數器。這裡的預設就照這樣。YAML 的每組 4096 只有 3 組，「玩」的策略有 6 組，載不進去。
+
+**聯集場景**，跟 Factory 一樣：
+
+- 每個環境放齊四個任務的零件、孔、目標標記。
+- 孔和目標標記是 kinematic。停放時放在桌面底下（z = −1 m），官方對「隨機目標」的環境也是這樣把孔藏起來。
+- 零件是動態的。停放時懸在 2.5 到 4 m 高的地方，用一個等於自身重量的往上力撐住，所以不碰任何東西。每次重設都把位置寫回去，避免數值誤差讓它飄走。
+- `ActiveRigidObject` 代替官方的 `env.object`／`env.hole`／`env.goal_viz`：讀的時候拿每個環境自己任務的零件，寫的時候只寫那一個。所以官方的觀測、獎勵、重設、結束判定都不用改。
+- 每個環境不同的值，都從官方的問題清單讀，不手抄：零件大小（觀測）、孔的高度、子目標位置（補齊到 10 個，鎖螺絲的數量）、子目標數、零件質量。
+
+**策略的輸入**：policy 和 critic 的輸入最後加任務 one-hot（4 個值），放在 SAPG 那一欄前面。釋出的「玩」存檔為它擴充，新欄權重是 0，所以輸出不變（檢查過：完全一樣）。
+
+**任務分配**：
+
+- Hetero：環境 i 整個訓練都做任務 i % 4。這個環境是一個一個重設的，不用輪換；每個 SAPG 組裡四個任務一樣多。
+- Homo：全部環境做同一個任務，每 40 輪（640 步，約一個回合）在一次收集的邊界換任務；被切斷的回合分開算。
+
+| 檔案 | 內容 |
+|---|---|
+| `hetero_p2p/problem_table.py` | 從官方問題清單讀四個任務的值，做成每個任務一列的張量 |
+| `hetero_p2p/active_views.py` | `ActiveRigidObject`：每個環境在用的零件；停放；停放零件的抗重力 |
+| `hetero_p2p/p2p_env_cfg.py`、`p2p_env.py` | 聯集場景的環境：繼承官方 `PreciseAssemblyEnv`，改的地方標 `HETERO` |
+| `hetero_p2p/checkpoint_utils.py` | 為 one-hot 擴充釋出的存檔（新欄權重 0） |
+| `hetero_p2p/train_utils.py` | 每輪的紀錄（每個任務、每個 SAPG 組的回合）、輕量存檔、Homo 換任務 |
+| `scripts/train_p2p.py` | 訓練，改自 Play2Perfect 的 `isaacsimenvs/train.py` |
+| `scripts/eval_p2p.py` | 每個任務的成功率，用官方的離線評估方法（每個環境只算第一回合、不隨機、關掉擾動） |
+| `scripts/check_p2p_env.py` | 檢查：停放、在用的零件、Homo 換任務 |
+| `scripts/plot_p2p.py` | 每個任務的成功率、獎勵對步數和時間（全部環境，或只看 SAPG 最後一組） |
+| `hetero_p2p/pose_record_p2p.py`、`scripts/record_video_p2p.py` | 錄影，做法跟 Factory 一樣：PhysX 記位置（停放的零件不畫），再用 `render_offline.py --ground_z 0` 畫。匯出網格的程式現在也讀 USD 的方塊、圓柱、球（Play2Perfect 的桌子、L 型插銷和孔都是方塊） |
+
+指令見英文版。
+
+目前檢查過的（2026-10-09，CPU 物理、24 個環境；GPU 正在跑 Factory 的計時）：
+
+- 擴充後的「玩」策略，動作、動作隨機性、value、LSTM 狀態都跟原本的完全一樣。
+- 場景建得起來；輸入是 144（policy）和 166（critic）個值；one-hot 對得上每個環境的任務；子目標數 2／2／2／10。
+- 停放的零件 60 步內偏離不到 0.1 µm。
+- Homo 換任務時，每個環境都換到下一個任務，one-hot、子目標數、零件大小跟著換；Homo 每次收集只有一個任務。
+- 訓練跑得起來，紀錄和存檔都有寫。
+- CPU 上驗不了的：PhysX 的 CPU 版不會保留寫給 kinematic 物體的位置（桌子、孔會跳回原位），所以在用的零件最後放在哪，要在 GPU 上驗。
+
+GPU 上檢查過的（2026-10-10）：
+
+- 停放的零件不動；在用的孔在桌上（z 約 0.53 m），在用的零件落在桌上或孔上；Homo 換任務正常。
+- **官方四個組裝策略（為 one-hot 擴充）放進聯集場景，用官方離線評估的方法（每個任務 1,024 個環境），成功率跟官方一樣**：
+
+  | 任務 | 聯集場景 | 官方（`eval_offline.py`，同一台機器） |
+  |---|---|---|
+  | 緊配合插入 | 95.9% | 96.9% |
+  | 橫樑組裝第一步 | 97.3% | 97.1% |
+  | 橫樑組裝第二步 | 92.3% | 92.2% |
+  | 鎖螺絲 | 61.0% | 61.4% |
+
+  每個官方策略只會自己的任務（別的任務 0% 到 25%）。
+- 兩個官方策略的影片：桌子、治具、零件位置都對；插銷插進去、桌腳鎖上去。
+- 12,288 個環境的速度（一次收集 16 步的模擬時間）：Homo 緊配合插入約 1.0 秒、橫樑第一步約 2.2 秒、第二步約 1.5 秒、鎖螺絲 8.5 到 11.6 秒；Hetero 約 9 秒。**混在一起跟最慢的任務（鎖螺絲）一樣慢**，跟 Factory 小規模時一樣，但這裡約是 Homo 平均的 2.4 倍（Factory 只多 11%）。建場景約 11 分鐘；GPU 記憶體最多約 48 GB。
+
+訓練（2026-10-10 到 10-13，結果見 [results/README.zh-TW.md](results/README.zh-TW.md)）：Hetero、Homo 各 10,000 輪（20 億步，每個任務約等於單獨訓練 2,500 輪；官方存檔每個任務練了 7,000 到 14,000 輪，2 到 5 小時學會，約 1,100 到 2,700 輪），之後每 2,000 輪用官方離線方法評估、錄影。
+
+跟官方第二階段不一樣的地方：任務 one-hot（和擴充的存檔）；聯集場景和停放；固定的輪數（官方設定是跑到手動停）。
 
 ## 還要組裡決定的事
 

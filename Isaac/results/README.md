@@ -1,6 +1,6 @@
 # Isaac / PhysX results (by RULES section)
 
-Status 2026-10-08. Chinese version: [README.zh-TW.md](README.zh-TW.md). How to run: [../README.md](../README.md). Raw logs, checkpoints and videos are on gputw1 and are not in the repository.
+Status 2026-10-10. Chinese version: [README.zh-TW.md](README.zh-TW.md). How to run: [../README.md](../README.md). Raw logs, checkpoints and videos are on gputw1 and are not in the repository.
 
 ## 1. Task families
 
@@ -14,8 +14,20 @@ Status 2026-10-08. Chinese version: [README.zh-TW.md](README.zh-TW.md). How to r
   | Beam assembly, step 2 | 92.2% |
   | Screwing | 61.4% |
 
-- Every released checkpoint has 6 SAPG blocks, i.e. it was trained with 24,576 envs. The repository's default config uses 8,192 envs (2 blocks), so stage-2 finetuning from the released play policy fails to load. Finetuning needs `env.scene.num_envs=24576`.
-- Homo/Hetero on Play2Perfect is scheduled after Factory.
+- Every released checkpoint has 6 SAPG blocks. The play policy was trained with 24,576 envs (blocks of 4,096); the four stage-2 policies with 12,288 envs in blocks of 2,048, with epochs counted from 0 (read from the checkpoints themselves). The repository's default config (8,192 envs, blocks of 4,096) gives 2 blocks, so stage-2 finetuning from the released play policy fails to load; 12,288 envs with blocks of 2,048 load it.
+- Homo/Hetero on Play2Perfect (2026-10-13; one seed, official advantage normalisation, 12,288 envs, union scene validated by the released policies: 95.9 / 97.3 / 92.3 / 61.0% vs official 96.9 / 97.1 / 92.2 / 61.4%). Deterministic evaluation, tight insertion / beam step 1 / beam step 2 / screwing:
+
+  | Epoch | Hetero | Homo, run 1 | Homo, run 2 |
+  |---|---|---|---|
+  | 2,000 | 30 / 88 / 66 / 0% | 3 / 66 / 52 / 0% | 2 / 60 / 54 / 0% |
+  | 6,000 | 71 / 96 / 83 / 46% | 32 / 88 / 75 / 0% | 21 / 86 / 72 / 0% |
+  | 10,000 | 83 / 96 / 88 / 62% | crashed | crashed |
+
+  - **Homo does not fit in GPU memory at the official scale.** Both Homo runs died (epochs 7,254 and 6,135) when PhysX could not grow its contact buffers: in a Homo block all 12,288 envs run the same task, so the contact-heavy tasks put all their contacts in the same steps (up to 92.6 GB; Hetero at most 48.8 GB). Kept as a result (2026-10-13); not rerun.
+  - Per sample, Hetero learns every task faster, and only Hetero learns screwing (Homo had more than 300 M screwing steps before crashing, about twice what Hetero needed to start). Per hour, tight insertion and the beam steps are about even (Homo epochs take about 5.5 s, Hetero about 10 s).
+  - Speed: a mixed step costs about as much as screwing alone (574 vs 717 ms per step at 12,288 envs); 768 screwing envs among tight-insertion envs already raise a step from 70 to 485 ms. Screwing legs touch their fixture from the reset on, so lining up contact phases in time cannot make steps cheaper here ([figures/p2p_alignment.png](figures/p2p_alignment.png)).
+
+  ![Play2Perfect](figures/p2p_success.png)
 
 ## 2. Backend settings
 
@@ -67,6 +79,7 @@ Line: mean of the seeds; band: lowest to highest seed. Return vs steps and time:
 
 - **With the official setting, Hetero loses on the nut task.** rl_games normalises the advantages of the whole rollout together. In a Hetero rollout the nut task, whose early rewards are small, is pushed negative as a whole: mean about -1.2, std 0.14-0.35 in the first epochs. One seed never learns it.
 - **Per-task normalisation removes the problem.** Hetero then learns all three tasks faster than Homo, per sample and per hour, and ends equal.
+- **Normalising the tasks together also hurts Homo** (meeting TODO1 below), so official Homo's edge on the nut task comes from the normalisation.
 - **RULES "run once" set** (`rules_*`, current code, official advantage normalisation, seed 0, checkpoints every 20 epochs). Success at epoch 200:
 
   | Group | Peg / gear / nut | Total time |
@@ -75,7 +88,33 @@ Line: mean of the seeds; band: lowest to highest seed. Return vs steps and time:
   | Homo | 97 / 78 / 96% | 2.20 h |
 
   These match the earlier seed-0 runs. Curves: [figures/rules_n128_success.png](figures/rules_n128_success.png).
-- **3 and 4096 envs**: the RULES runs (official 200 epochs at every scale) are in progress. An earlier provisional run gave 4096 envs the same env steps as 128 (only 6 updates); neither group learned.
+- **3 envs** (RULES runs, official 200 epochs): neither group learns. 200 epochs at 3 envs are 77k env steps, 1/43 of the 128-env runs; success is 0-8% at every checkpoint. Only the time is usable:
+
+  | Group | Total | Simulation |
+  |---|---|---|
+  | Hetero | 1.66 h | 1.63 h |
+  | Homo | 1.60 h | 1.57 h |
+
+  Hetero simulates 4% longer, less than the 7% of section 6, because the untrained policies rarely insert the parts. Homo's time excludes a 7.1 h pause (the GPU guard stopped the run while another user's job started).
+- **4096 envs** (RULES runs, official 200 epochs, 105 M env steps): **Hetero clearly beats Homo**, unlike at 128 envs.
+
+  | Epoch | Hetero (official), deterministic eval | Homo |
+  |---|---|---|
+  | 40 | 28 / 62 / 9% | 27 / 0 / 18% |
+  | 80 | 97 / 86 / 89% | 52 / 20 / 46% |
+  | 200 | 97 / 83 / 97% | 85 / 42 / 96% |
+
+  | Group | Total | Simulation | GPU memory (max) |
+  |---|---|---|---|
+  | Hetero | 23.0 h | 17.5 h | 37.5 GB |
+  | Homo | 21.3 h | 15.8 h | 32.7 GB |
+
+  - Hetero learns peg and gear much faster, per sample and per hour, although it simulates 11% longer (as at 128 envs). Homo's gear stays low (training success 65% in the last fifth, deterministic 42% at epoch 200). Nut is similar.
+  - Hetero's nut did not drop in the deterministic evaluation here (97%), unlike seed 0 at 128 envs (62%). One seed each: scale or luck cannot be told apart.
+  - Why Homo falls behind at 4096 envs is not established. An inference: the minibatch stays 512, so an epoch at 4096 envs has 32 times the gradient steps, and a Homo block (4 epochs on one task) becomes thousands of single-task steps, which favours forgetting. Homo's gear curve keeps rising and falling, consistent with this, but it is not tested.
+  - Homo's update-to-update cosine is 0.04 across a switch and 0.14 within a task (128 envs: -0.30 and +0.27).
+
+  ![4096 envs](figures/rules_n4096_success.png)
 
 ## 5. Gradients (128 envs)
 
@@ -158,9 +197,20 @@ Line: mean of the seeds; band: lowest to highest seed. Return vs steps and time:
 | One-read pose of the active parts | Removed 2% of a Hetero step that came from our code, not PhysX |
 | Big-list scene | Measures what the union scene's parked parts cost |
 
-## Meeting TODOs (2026-10-07), in progress
+## Meeting TODOs (2026-10-07)
 
-- **TODO1** (fair normalisation for Homo): `--adv_norm pooled` runs (Homo, 128 envs, 3 seeds) are queued.
+- **TODO1** (fair normalisation for Homo): with `--adv_norm pooled`, Homo gets what the official setting does in Hetero: each rollout is normalised with statistics pooled over the latest rollout of every task. Homo, 128 envs, 3 seeds. Final success, peg / gear / nut:
+
+  | | All tasks normalised together | Each task normalised on its own |
+  |---|---|---|
+  | Hetero | 87 / 88 / **42**% (official, 3 seeds) | 92 / 83 / 90% (5 seeds) |
+  | Homo | 86 / **70** / 82% (pooled, 3 seeds) | 91 / 83 / 92% (official, 5 seeds) |
+
+  - **Normalising the tasks together hurts both.** Hetero loses the nut task. Homo learns peg and gear more slowly, and on gear all three seeds end below official Homo's worst seed (64-74% vs 75%).
+  - **With per-task normalisation, Hetero and Homo end equal**, and Hetero learns faster early. When both normalise per task, mixing the tasks costs nothing in learning.
+  - **Measured shift**: in the first 50 epochs, pooling moves the mean advantage of a Homo rollout by +0.25 (peg), +0.37 (gear) and -0.44 (nut); later it stays near 0. Why Hetero and Homo lose different tasks is still open.
+
+  ![2x2 of normalisation](figures/todo1_success.png)
 - **TODO2** (split the simulation over several processes on one GPU): **no gain; one mixed process is fastest** at every scale. Env steps per second, all tasks together:
 
   | Total envs | One mixed process | Three single-task processes at once | Three single-task processes one after another |

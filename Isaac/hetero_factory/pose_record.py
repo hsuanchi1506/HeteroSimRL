@@ -62,6 +62,47 @@ def _material_rgba(prim):
     return None
 
 
+def _primitive_mesh(prim):
+    """Points, face counts and indices of a USD shape primitive (Cube, Cylinder, Sphere), in its local frame.
+    Play2Perfect's table, L-peg and hole are boxes; Factory's parts are meshes and never reach this."""
+    from pxr import UsdGeom
+
+    if prim.IsA(UsdGeom.Cube):
+        h = 0.5 * float(UsdGeom.Cube(prim).GetSizeAttr().Get() or 2.0)
+        pts = [(x, y, z) for x in (-h, h) for y in (-h, h) for z in (-h, h)]
+        quads = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+        return pts, [4] * 6, [i for q in quads for i in q]
+    n = 16
+    if prim.IsA(UsdGeom.Cylinder):
+        c = UsdGeom.Cylinder(prim)
+        r, hh = float(c.GetRadiusAttr().Get() or 1.0), 0.5 * float(c.GetHeightAttr().Get() or 2.0)
+        axis = str(c.GetAxisAttr().Get() or "Z")
+        ring = [(r * np.cos(2 * np.pi * k / n), r * np.sin(2 * np.pi * k / n)) for k in range(n)]
+
+        def put(u, v, w):  # (radial u, radial v, axial w) -> xyz
+            return {"X": (w, u, v), "Y": (v, w, u)}.get(axis, (u, v, w))
+
+        pts = [put(u, v, -hh) for u, v in ring] + [put(u, v, hh) for u, v in ring]
+        counts, idx = [n, n], list(range(n - 1, -1, -1)) + list(range(n, 2 * n))
+        for k in range(n):
+            counts.append(4)
+            idx += [k, (k + 1) % n, n + (k + 1) % n, n + k]
+        return pts, counts, idx
+    if prim.IsA(UsdGeom.Sphere):
+        r = float(UsdGeom.Sphere(prim).GetRadiusAttr().Get() or 1.0)
+        m = n // 2
+        pts = [(r * np.sin(np.pi * i / m) * np.cos(2 * np.pi * k / n), r * np.sin(np.pi * i / m) * np.sin(2 * np.pi * k / n),
+                r * np.cos(np.pi * i / m)) for i in range(m + 1) for k in range(n)]
+        counts, idx = [], []
+        for i in range(m):
+            for k in range(n):
+                a0, a1 = i * n + k, i * n + (k + 1) % n
+                counts.append(4)
+                idx += [a0, a0 + n, a1 + n, a1]
+        return pts, counts, idx
+    return None
+
+
 def export_meshes(stage, root_path: str, frame_path: str | None, body_names, default_rgba, force_rgba=None):
     """Visible meshes under ``root_path`` as (body name, vertices [V, 3], triangles [F, 3], rgba).
 
@@ -78,17 +119,22 @@ def export_meshes(stage, root_path: str, frame_path: str | None, body_names, def
         Usd.TimeCode.Default())) if frame_path else None
     out = []
     for prim in Usd.PrimRange(root, Usd.TraverseInstanceProxies()):
-        if not prim.IsA(UsdGeom.Mesh):
+        is_mesh = prim.IsA(UsdGeom.Mesh)
+        if not is_mesh and not (prim.IsA(UsdGeom.Cube) or prim.IsA(UsdGeom.Cylinder) or prim.IsA(UsdGeom.Sphere)):
             continue
         img = UsdGeom.Imageable(prim)
         if img.ComputeVisibility() == UsdGeom.Tokens.invisible:
             continue
         if img.ComputePurpose() not in (UsdGeom.Tokens.default_, UsdGeom.Tokens.render):
             continue
-        mesh = UsdGeom.Mesh(prim)
-        pts = mesh.GetPointsAttr().Get()
-        counts = mesh.GetFaceVertexCountsAttr().Get()
-        idx = mesh.GetFaceVertexIndicesAttr().Get()
+        if is_mesh:
+            mesh = UsdGeom.Mesh(prim)
+            pts = mesh.GetPointsAttr().Get()
+            counts = mesh.GetFaceVertexCountsAttr().Get()
+            idx = mesh.GetFaceVertexIndicesAttr().Get()
+        else:
+            mesh = UsdGeom.Gprim(prim)
+            pts, counts, idx = _primitive_mesh(prim)
         if not pts or not counts or not idx:
             continue
         if frame_m is not None:
@@ -112,7 +158,7 @@ def export_meshes(stage, root_path: str, frame_path: str | None, body_names, def
             tris.extend((f[0], f[k], f[k + 1]) for k in range(1, c - 1))
             start += c
         tris = np.asarray(tris, dtype=np.int32).reshape(-1, 3)
-        if mesh.GetOrientationAttr().Get() == UsdGeom.Tokens.leftHanded:
+        if is_mesh and mesh.GetOrientationAttr().Get() == UsdGeom.Tokens.leftHanded:
             tris = tris[:, ::-1]
         rgba = force_rgba or _material_rgba(prim) or default_rgba
         out.append((body, v.astype(np.float32), tris, tuple(float(x) for x in rgba)))

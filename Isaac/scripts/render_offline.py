@@ -29,7 +29,7 @@ from hetero_factory.video_utils import Writer, compose  # noqa: E402
 os.environ.setdefault("MUJOCO_GL", "egl")
 import mujoco  # noqa: E402
 
-GROUND_Z = -1.05  # the Factory scene's ground plane (the table top is at z = 0)
+GROUND_Z = -1.05  # the Factory scene's ground plane (the table top is at z = 0); Play2Perfect: --ground_z 0
 OUT_OF_SIGHT = (0.0, 0.0, -50.0)
 
 
@@ -43,7 +43,7 @@ def load(path: Path):
     return z, meta
 
 
-def build_model(z, meta, width: int, height: int):
+def build_model(z, meta, width: int, height: int, ground_z: float = GROUND_Z):
     """MJCF with the recorded meshes; returns (model, {(asset, body): mocap id})."""
     verts, faces = z["mesh_verts"], z["mesh_faces"]
     mesh_xml, static_xml, body_geoms = [], [], {}
@@ -79,7 +79,7 @@ def build_model(z, meta, width: int, height: int):
   </asset>
   <worldbody>
     <light pos="0.9 -0.9 2.5" dir="-0.3 0.3 -1" castshadow="true" diffuse="0.55 0.55 0.55"/>
-    <geom type="plane" size="4 4 0.1" pos="0 0 {GROUND_Z}" material="grid"/>
+    <geom type="plane" size="4 4 0.1" pos="0 0 {ground_z}" material="grid"/>
     {"".join(static_xml)}
     {"".join(bodies_xml)}
   </worldbody>
@@ -109,11 +109,12 @@ def main():
     parser.add_argument("--eye", type=float, nargs=3, default=[0.25, -0.2, 0.17],
                         help="Camera position relative to the fixed part's tip (m, env frame).")
     parser.add_argument("--per_task", type=int, default=None, help="Tiles per task (default: as recorded).")
+    parser.add_argument("--ground_z", type=float, default=GROUND_Z, help="Ground plane height in the env frame.")
     args = parser.parse_args()
 
     z, meta = load(args.recording)
     w, h = args.tile
-    model, mocap = build_model(z, meta, w, h)
+    model, mocap = build_model(z, meta, w, h, args.ground_z)
     data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model, h, w)
     cam = free_camera(args.eye)
