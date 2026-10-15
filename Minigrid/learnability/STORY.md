@@ -62,6 +62,7 @@ coverage = mean over 30 abstract states z of  log( P(reach z in one episode) + 1
 - 在 8 種 held-out 練習上，覆蓋率的相關是 +0.75。
 - 完美指標的上限大約是 0.85，因為 ground truth 本身有 seed 的雜訊。
 - 50% 隨機動作最好。只用 policy、不加隨機時，相關是 0.46。因為 finetune 會在 policy 附近探索，所以要量的是 policy 附近能碰到哪裡。
+  例子：open_door 練到 98% 後，一站到開著的門前就一直開關門，只照 policy 走時幾乎進不了右房（3%）；加 50% 隨機後是 92%，而它學 goal 任務確實很快（AUC 0.89 vs scratch 0.20）。見 `POTENTIAL.md` 2.9 和影片 [`8_more_practice_makes_the_agent_stay_at_the_open_door.mp4`](videos/8_more_practice_makes_the_agent_stay_at_the_open_door.mp4)。
 - **它也能決定何時停止 pre-training**：每種練習都在覆蓋率最高的 checkpoint 停下，held-out 增益是 +0.051。oracle 是 +0.060，隨機停是 +0.026，一律練到 2M 是 +0.017。
 
 ### 為什麼有效

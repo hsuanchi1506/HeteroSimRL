@@ -329,6 +329,24 @@ SMM 對照（同樣的 30 種局面）:
 - **Critic 的差別。** SMM、impact、explore 的 critic 學的是「每一步都有 reward」，整個網路搬過去時，三個門任務全部學不會（AUC = 0）。coverage 的 reward 只在第一次到達罕見局面時出現，它的 critic 指向「前面還有沒去過的地方」，所以整個網路搬過去也有 +0.68。
 - **量尺對這些新練習也排得對。** 9 個新 checkpoint 上，`mix_logreach` 和實際增益的 ρ = 0.90；和原本 84 點合在一起是 0.69。但它低估了位置版 coverage：它的可達性分數（−2.87）和舊的最高分（−2.98）差不多，實際增益卻是 +0.33 vs +0.12。
 
+### 2.9 練越久，越會卡在門邊，但下游不受影響
+
+![door](figs/fig_door_habit.png)
+
+`analyze.py door_habit`（結果在 `results/door_habit.txt`）：把 agent 放在剛開好門的狀態，也就是站在門前、面向門、手上拿著鑰匙、門已經開著，讓 policy 走 200 步。
+
+| Policy | 練習成功率 | 第一步按開關門 | 時間待在門邊 | 50 步內進右房 | 200 步內到 goal | goal 任務 finetune AUC |
+|---|---|---|---|---|---|---|
+| 隨機初始化 | — | 17% | 20% | 27% | 11% | 0.20（scratch） |
+| open_door 250k | 44% | 68% | 66% | 36% | 13% | 0.88 |
+| open_door 500k | 97% | 91% | 95% | 5% | 0.5% | 0.82 |
+| open_door 2M | 98% | **98%** | **99.8%** | 2% | **0.1%** | 0.89 |
+| SMM 1M | — | 30% | 19% | 40% | 24% | 0.58 |
+
+- **習慣是真的。** 練到 97% 以上的 open_door 一看到門就按開關，在門邊開關門循環，到 goal 的機率比隨機還低。原因是練習在門打開那一刻就結束，policy 從沒學過門開了以後要做什麼。
+- **下游不受影響。** goal 任務的 AUC 從 250k 到 2M 都在 0.82–0.89，scratch 只有 0.20。壞習慣只壞在門前一個局面，離 goal 很近；policy 每局都可靠地把 agent 帶到門開著的狀態，偶爾一步往前就碰得到成功，PPO 只要改掉門前那一個動作。從 finetune 曲線看，98% 的版本起步比 44% 晚一點，但大約 0.35M 步就追上。
+- **這是覆蓋率要加 50% 隨機動作的原因。** 只看 policy 本身，open_door 進右房的比例隨練習下降（250k 0.35 → 2M 0.03），會誤判成越練越糟；加 50% 隨機後是 0.29 → 0.92，和下游結果一致。
+
 ---
 
 ## 3. 回答研究問題
@@ -414,3 +432,4 @@ analyze.py:1855 pot_report       every table above                              
 | `videos/5_practice_success_does_not_show_what_the_agent_can_learn_next.mp4` | 練了 2M 步的 pick_key（成功率 99%）、face_door（100%）、enter_right（97%），加 50% 隨機動作，在沒有 reward 的世界裡並排。只有 enter_right 會開門、進右房。下方是這三個 checkpoint 在 4 個門鏈任務上的 finetune 曲線（critic reset），增益分別是 +0.16、−0.02、+0.65 | 2.1、2.2 |
 | `videos/6_different_practice_reaches_different_states.mp4` | impact（內在獎勵）和 enter_right，同樣加 50% 隨機動作。impact 撿球和箱子，從不開門；enter_right 開門、進右房，從不碰球和箱子。下方是門鏈任務和左房間任務的 finetune 曲線：門鏈任務 enter_right 比較快（+0.65 vs −0.08），左房間任務 impact 比較快（+0.20 vs −0.05） | 2.4 |
 | `videos/7_reward_free_coverage_practice_makes_the_agent_open_the_door.mp4` | coverage、SMM、explore 各練 1M 步（都沒有任務 reward），純 policy 在沒有 reward 的世界裡並排。coverage 拿鑰匙、開門、進右房、撿紫球；SMM 只拿鑰匙；explore 什麼都沒碰。這兩個佈局是 coverage 跑完整條鏈的例子（測過的 6 個佈局裡有 5 個會開門）；提示列寫的是多局的開門率：coverage 75%、SMM 9%、explore 0%。下方是 4 個門鏈任務的 finetune 曲線：增益 +0.64、+0.20、−0.13 | 2.8 |
+| `videos/8_more_practice_makes_the_agent_stay_at_the_open_door.mp4` | 從「門已開、拿著鑰匙、站在門前」開始，並排 open_door 44%（250k）、open_door 98%（2M）、SMM 1M。98% 的版本一直在門邊開關門，從沒進右房；44% 的版本常常穿過門；SMM 走進右房。這兩個佈局是典型的例子（10 個佈局裡，98% 版本 10 個都卡住，44% 版本 7 個穿過門）。提示列寫的是多局 200 步內到 goal 的比例：13%、0%、24%。下方是 goal 任務的 finetune 曲線：增益 +0.67、+0.68、+0.37 | 2.9 |

@@ -474,7 +474,7 @@ def mg_render(env, tile=40):
 
 
 @torch.no_grad()
-def gw_rollout(params, task, events, layout, max_steps=200, S=10, variant=0, eps=0.0):
+def gw_rollout(params, task, events, layout, max_steps=200, S=10, variant=0, eps=0.0, at_door=False):
     import learn
     from gridworld import PREDICATES, World, featurize, feature_lut
     R = len(params)
@@ -487,6 +487,12 @@ def gw_rollout(params, task, events, layout, max_steps=200, S=10, variant=0, eps
     for k in ["grid", "pos", "dir", "wx", "door"]:
         getattr(world, k)[:] = world.bank[k][idx]
     world.carry.zero_(); world.t.zero_(); world.hit.zero_()
+    if at_door:
+        from gridworld import EMPTY, KEY_C
+        world.grid[world.grid == KEY_C] = EMPTY
+        world.carry[:] = KEY_C
+        world.pos = torch.stack([world.door[:, 0] - 1, world.door[:, 1]], 1)
+        world.dir[:] = 0
     ev = [PREDICATES.index(e) for e in events]
     status, ts, out = ["run"] * R, [0] * R, []
     for _ in range(max_steps + 1):
@@ -2141,6 +2147,132 @@ def story():
     fig.savefig(os.path.join(FIG, "fig_story_4.png"), dpi=150, bbox_inches="tight")
     plt.close(fig)
     open(os.path.join(RES, "story.txt"), "w").write("\n".join(lines))
+
+
+@torch.no_grad()
+def door_segment(p, R, E=256, T=200, seed=3):
+    import learn
+    from gridworld import CLOSED, EMPTY, GOAL_C, KEY_C, featurize, feature_lut
+    torch.manual_seed(seed)
+    lut = feature_lut(learn.DEV)
+    w = learn.make_world([{"task": ["null"], "world": "open"}] * R, E, seed, desync=False)
+    w.grid[w.grid == KEY_C] = EMPTY
+    w.carry[:] = KEY_C
+    w.pos = torch.stack([w.door[:, 0] - 1, w.door[:, 1]], 1)
+    w.dir[:] = 0
+    B = R * E
+    right_t, goal_t = torch.full((B,), -1, device=learn.DEV), torch.full((B,), -1, device=learn.DEV)
+    closed = torch.zeros(B, dtype=torch.bool, device=learn.DEV)
+    near = torch.zeros(B, device=learn.DEV)
+    for t in range(T):
+        logits = learn.forward(p, featurize(w.obs(), lut).view(R, E, -1))[0]
+        if t == 0:
+            p0 = logits.softmax(-1).mean(1).cpu()
+        w.step(torch.distributions.Categorical(logits=logits).sample().flatten(), reset=False)
+        closed |= (w.grid[w.ar, w.door[:, 1], w.door[:, 0]].long() >> 6) == CLOSED
+        right_t = torch.where((right_t < 0) & (w.pos[:, 0] > w.wx), t + 1, right_t)
+        goal_t = torch.where((goal_t < 0) & (w.grid[w.ar, w.pos[:, 1], w.pos[:, 0]] == GOAL_C), t + 1, goal_t)
+        near += ((w.pos - w.door).abs().sum(1) <= 1).float()
+    v = lambda x: x.view(R, E).float()
+    return {"toggle0": p0[:, 5].numpy(), "near_door": (v(near) / T).mean(1).cpu().numpy(), "close_door": v(closed).mean(1).cpu().numpy(),
+            "right50": ((v(right_t) > 0) & (v(right_t) <= 50)).float().mean(1).cpu().numpy(), "goal200": (v(goal_t) > 0).float().mean(1).cpu().numpy()}
+
+
+def door_habit():
+    import learn
+    lines = []
+    say = lambda s: (print(s), lines.append(s))
+    load_c = lambda f, c: (lambda ck, ids: ({k: ck["params"][k][ids] for k in learn.KEYS}, len(ids)))(
+        *(lambda ck: (ck, [i for i, r in enumerate(ck["runs"]) if r["cond"] == c]))(torch.load(os.path.join(learn.CKPT, f), map_location="cuda")))
+    steps = [50_000, 100_000, 250_000, 500_000, 1_000_000, 2_000_000]
+    rows, fresh, d = metric_rows()
+    sc, ck, B = gt_table()
+    od = {}
+    for st in steps:
+        p, R = load_c(learn.pre_file(st), "open_door")
+        od[st] = door_segment(p, R)
+    torch.manual_seed(0)
+    ref = {"random init": door_segment(learn.fresh_params(3), 3)}
+    for name, f, c in [("SMM 1M", "prec_1000000.pt", "smm"), ("enter_right 2M", "pre_final.pt", "enter_right"), ("coverage 1M", "prec_1000000.pt", "cover")]:
+        ref[name] = door_segment(*load_c(f, c))
+    keys = ["toggle0", "near_door", "close_door", "right50", "goal200"]
+    say("start: door open, agent in front of the door, holding the key; 200 steps, stochastic policy, 3 seeds x 256 episodes")
+    say(f"{'policy':24s} {'practice sr':>11s}" + "".join(f"{k:>12s}" for k in keys) + f"{'goal AUC':>10s}")
+    for st in steps:
+        sr = np.nanmean([rows[("open_door", ps, st)]["practice_sr"] for ps in range(3)])
+        auc = np.mean([ck[("open_door", ps, st)]["goal"][0] for ps in range(3)])
+        say(f"{'open_door ' + str(st // 1000) + 'k':24s} {sr:11.2f}" + "".join(f"{od[st][k].mean():12.3f}" for k in keys) + f"{auc:10.3f}")
+    for name, r in ref.items():
+        say(f"{name:24s} {'':>11s}" + "".join(f"{r[k].mean():12.3f}" for k in keys))
+    say(f"scratch goal AUC {sc['goal']['auc']:.3f}")
+    right = {"policy only": [], "50% random": []}
+    for st in steps:
+        ids = [i for i, r in enumerate(d[st]["runs"]) if r["cond"] == "open_door"]
+        right["policy only"].append(float(d[st]["m"]["roll"]["evrate"][ids, 11].mean()))
+        right["50% random"].append(float(d[st]["m"]["mix"]["evrate"][ids, 11].mean()))
+    say("right-room rate from a random start: policy only " + " ".join(f"{v:.3f}" for v in right["policy only"]) +
+        " | 50% random " + " ".join(f"{v:.3f}" for v in right["50% random"]))
+
+    x = [s / 1e6 for s in steps]
+    fig, axs = plt.subplots(1, 3, figsize=(15, 3.9))
+    for k, lab, col in [("toggle0", "first action is toggle", SERIES[7]), ("near_door", "time next to the door", SERIES[0]),
+                        ("goal200", "reaches the goal in 200 steps", SERIES[2])]:
+        axs[0].plot(x, [od[s][k].mean() for s in steps], marker="o", color=col, label=lab)
+        axs[0].axhline(ref["random init"][k].mean(), color=col, lw=0.8, ls=":")
+    axs[0].set_title("Start at the open door, holding the key", loc="left")
+    axs[0].set_ylabel("fraction (dotted = random policy)")
+    for (k, v), col in zip(right.items(), [MUTED, SERIES[1]]):
+        axs[1].plot(x, v, marker="o", color=col, label=k)
+    axs[1].set_title("Enters the right room (random start, reward-free)", loc="left")
+    axs[1].set_ylabel("fraction of episodes")
+    axs[2].plot(x, [np.mean([ck[("open_door", ps, s)]["goal"][0] for ps in range(3)]) for s in steps], marker="o", color=SERIES[0],
+                label="after open_door practice")
+    axs[2].axhline(sc["goal"]["auc"], color=INK2, lw=1, ls="--", label="from scratch")
+    axs[2].set_title("Finetune on the goal task (critic reset, 2M)", loc="left")
+    axs[2].set_ylabel("AUC")
+    for ax in axs:
+        ax.set_xscale("log")
+        ax.set_xlabel("open_door practice steps (M, log)")
+        ax.set_ylim(0, 1.02)
+        ax.legend(fontsize=7.5)
+    fig.tight_layout()
+    fig.savefig(os.path.join(FIG, "fig_door_habit.png"), dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    open(os.path.join(RES, "door_habit.txt"), "w").write("\n".join(lines))
+    return od, ref
+
+
+def door_video(layouts=(4, 7)):
+    import learn
+    out = os.path.join(ROOT, "videos")
+    load_c = lambda f, c: (lambda ck: {k: ck["params"][k][[i for i, r in enumerate(ck["runs"]) if r["cond"] == c]] for k in learn.KEYS})(
+        torch.load(os.path.join(learn.CKPT, f), map_location="cuda"))
+    cases = [("pre_250000.pt", "open_door", 250_000), ("pre_final.pt", "open_door", 2_000_000), ("prec_1000000.pt", "smm", 1_000_000)]
+    goal = [float(door_segment(load_c(f, c), 3)["goal200"].mean()) for f, c, _ in cases]
+    rows, _, _ = metric_rows()
+    sr = [np.nanmean([rows[("open_door", ps, st)]["practice_sr"] for ps in range(3)]) for _, c, st in cases[:2]]
+    x, cv = gt_curves([(c, st) for _, c, st in cases] + [("scratch",)], ["goal"], ("gt", "gt_cov"))
+    base = cv[("scratch",)].mean()
+    labels = [f"open_door, {sr[0]:.0%} success", f"open_door, {sr[1]:.0%} success", "SMM"]
+    cols = [SERIES[0], SERIES[7], SERIES[3]]
+    series = [(f"{lb} practice: gain {cv[(c, st)].mean() - base:+.2f}", col, x, cv[(c, st)].mean(0, keepdims=True))
+              for lb, col, (_, c, st) in zip(labels, cols, cases)] + [("From scratch", INK2, x, cv[("scratch",)].mean(0, keepdims=True))]
+    ch = chart([("Goal task after finetuning (critic reset, 3 seeds)", "Success rate", (0, 1.05), False, series)], [0.0], 2.0,
+               "Finetuning steps on the goal task (M)")
+    title = "More practice makes the agent stay at the open door."
+    hints = [f"The door is open. The agent holds the key. After {sr[1]:.0%} practice success, the agent closes and opens the door again and again. "
+             f"After {sr[0]:.0%}, it often goes through.",
+             f"In 200 steps, the agent reaches the goal: {goal[0]:.0%} ({sr[0]:.0%} agent), {goal[1]:.0%} ({sr[1]:.0%} agent), {goal[2]:.0%} (SMM). "
+             "But after finetuning, the goal task learns fast after open_door practice."]
+    ev = (["close_door", "enter_right", "goal"], ["Door closed", "Right room", "Goal"])
+    subs = ["250k practice steps", "2M practice steps", "1M practice steps, no task reward"]
+    frames = []
+    for lay, hint in zip(layouts, hints):
+        ags = [ck_slice(f, c, 0) for f, c, _ in cases]
+        st = gw_rollout(ags, "null", ev[0], lay, max_steps=100, variant=2, at_door=True)
+        print("video8", lay, [s["ev"].tolist() for s in st[-1]])
+        frames += scene(st, labels, cols, subs, title, hint, "Start: door open, agent holds the key", ev[1], False, ch)
+    write_video(frames, os.path.join(out, "8_more_practice_makes_the_agent_stay_at_the_open_door.mp4"))
 
 
 if __name__ == "__main__":

@@ -44,6 +44,8 @@ uv run python learn.py mixopen                 # coverage in the door-open world
 uv run python learn.py early                   # every practice task at 50k, 18 finetune runs, critic reset and full transfer
 uv run python learn.py rehearse                # 100k zero-reward finetuning of every checkpoint, then coverage
 uv run python analyze.py pot_report            # results/potential.txt, figs/fig_pot*.png
+uv run python analyze.py door_habit            # behavior at the open door vs practice length, results/door_habit.txt, figs/fig_door_habit.png
+uv run python analyze.py door_video            # videos/8_*.mp4
 
 # REPORT.md: earlier study (critic interference, real MiniGrid)
 ./run_all.sh                                   # every REPORT.md experiment + figures + videos (~6 h on one RTX 5090 + 24-core CPU)
