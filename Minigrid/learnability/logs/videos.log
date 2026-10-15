@@ -1,0 +1,14 @@
+learned within 4M: {('none', 'scratch'): '9/12', ('open_door', 'full'): '11/12', ('face_door', 'full'): '3/12', ('face_door', 'nocritic'): '8/12'} median runs: {('none', 'scratch'): 0, ('open_door', 'full'): 18, ('face_door', 'full'): 28, ('face_door', 'nocritic'): 37}
+ch1 0 [('fail', 200, [False, False, False, False]), ('fail', 200, [True, True, False, False]), ('fail', 200, [False, False, False, False])]
+ch1 491520 [('fail', 200, [False, False, False, False]), ('win', 16, [True, True, True, True]), ('fail', 200, [True, False, False, False])]
+ch1 2998272 [('win', 16, [True, True, True, True]), ('win', 16, [True, True, True, True]), ('fail', 200, [False, False, False, False])]
+ch2 0 [('fail', 200, [False, False, False, False]), ('fail', 200, [False, False, False, False])] V0 [0.91, 0.0]
+ch2 245760 [('fail', 200, [True, False, False, False]), ('fail', 200, [False, False, False, False])] V0 [0.01, 0.0]
+ch2 1998848 [('fail', 200, [False, False, False, False]), ('win', 18, [True, True, True, True])] V0 [0.0, 0.56]
+ch3 0 [('cut', 200, [True, False, False]), ('cut', 200, [True, True, False]), ('cut', 200, [True, True, False])] eval [(0.0, 0.09375), (0.0, 0.96875), (0.0, 0.96875)] V0 [0.0, 0.86, 0.0]
+ch3 102400 [('cut', 200, [True, False, False]), ('cut', 200, [False, False, False]), ('win', 34, [True, True, True])] eval [(0.0, 0.21875), (0.46875, 0.78125), (1.0, 1.0)] V0 [-0.0, 0.11, 0.82]
+ch3 307200 [('win', 98, [True, True, True]), ('win', 23, [True, True, True]), ('win', 25, [True, True, True])] eval [(0.25, 0.375), (1.0, 1.0), (1.0, 1.0)] V0 [0.02, 0.83, 0.85]
+appendix probe ['Key 40%, ball 42%, door open 1.2%', 'Key 25%, ball 22%, door open 2.5%', 'Key 23%, ball 19%, door open 1.1%'] [3.25439453125, 0.955078125, 1.5546875]
+appendix 1 [('fail', [False, False, False, False]), ('fail', [False, False, False, False]), ('fail', [False, False, False, False])]
+appendix 2 [('fail', [True, False, False, False]), ('fail', [False, False, True, False]), ('fail', [False, False, False, False])]
+EXIT 0

@@ -1,0 +1,285 @@
+== main practice: 84 (task, step) points, oracle top5 gain 0.096, mean 0.026
+   reliability (pseed split, 1 seed / Spearman-Brown 3 seeds): (np.float64(0.47253889507610275), np.float64(0.7288226169696677))
+metric                   dev      test    D_test    L_test    O_test within_st   partial front_auc      top5   ci90        cost_steps
+mix_ev_logreach         0.88      0.64      0.60      0.17      0.21      0.58      0.64      0.89      0.06   [+0.44,+0.80] 409600
+mix_rr                  0.87      0.64      0.63      0.31      0.03      0.59      0.67      0.85      0.03   [+0.46,+0.79] 409600
+mix_logreach            0.90      0.63      0.59      0.17      0.17      0.56      0.63      0.89      0.05   [+0.42,+0.80] 409600
+lp50                    0.66      0.61      0.46      0.56      0.08      0.59      0.62      0.78      0.07   [+0.30,+0.83] 300000
+occ_ent                 0.58      0.61      0.39      0.39      0.31      0.58      0.61      0.74      0.06   [+0.27,+0.82] 409600
+lp100                   0.72      0.60      0.47      0.52      0.06      0.56      0.60      0.80      0.08   [+0.28,+0.83] 600000
+ds_trunc250_dev         0.60      0.60      0.39      0.62      0.01      0.55      0.60      0.74      0.08   [+0.33,+0.80] 2000000
+mix_surp                0.77      0.59      0.61      0.41     -0.03      0.60      0.61      0.78      0.04   [+0.31,+0.79] 409600
+jump_logreach           0.87      0.56      0.68      0.08      0.06      0.49      0.57      0.88      0.04   [+0.33,+0.74] 409600
+ds_full_dev             1.00      0.55      0.57      0.23      0.01      0.46      0.55      0.90      0.07   [+0.34,+0.70] 16000000
+z_rr                    0.77      0.53      0.51      0.36      0.01      0.49      0.53      0.79      0.06   [+0.22,+0.80] 409600
+lp250                   0.86      0.53      0.56      0.32     -0.02      0.44      0.53      0.83      0.07   [+0.24,+0.77] 1500000
+ev_surp                 0.75      0.51      0.50      0.38     -0.02      0.46      0.51      0.77      0.06   [+0.20,+0.81] 409600
+jump_rr                 0.71      0.51      0.64      0.19     -0.12      0.57      0.62      0.76      0.03   [+0.27,+0.63] 409600
+open_surp               0.64      0.50      0.36      0.37      0.14      0.51      0.50      0.73      0.07   [+0.20,+0.78] 409600
+z_n                     0.68      0.50      0.46      0.46     -0.04      0.48      0.50      0.76      0.07   [+0.12,+0.82] 409600
+ev_lift                 0.56      0.48      0.22      0.23      0.40      0.50      0.57      0.76      0.07   [+0.21,+0.69] 409600
+ds_trunc250_test        0.31      0.45      0.02      0.75      0.12      0.48      0.46      0.62      0.06   [+0.12,+0.73] 3750000
+z_logreach              0.59      0.45      0.26      0.16      0.37      0.53      0.56      0.78      0.06   [+0.20,+0.67] 409600
+open_rr                 0.66      0.45      0.40      0.27      0.11      0.47      0.46      0.74      0.07   [+0.16,+0.72] 409600
+door                    0.81      0.44      0.55      0.14      0.03      0.34      0.45      0.82      0.03   [+0.17,+0.69] 409600
+ev_logreach             0.55      0.44      0.20      0.20      0.38      0.50      0.55      0.76      0.06   [+0.19,+0.66] 409600
+right                   0.75      0.44      0.50      0.08      0.14      0.41      0.46      0.81      0.06   [+0.17,+0.68] 409600
+z_depth                 0.72      0.44      0.60      0.24     -0.08      0.43      0.44      0.76      0.06   [+0.16,+0.69] 409600
+mix_depth               0.72      0.38      0.66      0.15     -0.18      0.41      0.41      0.74      0.03   [+0.07,+0.63] 409600
+ds_trunc100_test        0.33      0.37      0.08      0.70     -0.03      0.38      0.37      0.59      0.06   [-0.01,+0.68] 1500000
+aff_unlock              0.71      0.35      0.47      0.07      0.02      0.09      0.35      0.77      0.02   [+0.04,+0.63] 409600
+fisher                  0.06      0.34      0.15      0.20      0.27      0.35      0.34      0.52      0.04   [+0.15,+0.51] 51200
+aff_fwd                 0.29      0.34      0.11      0.43      0.10      0.32      0.35      0.57      0.02   [+0.05,+0.57] 409600
+key                     0.75      0.34      0.51      0.29     -0.23      0.27      0.35      0.79      0.02   [-0.01,+0.65] 409600
+jump_depth              0.60      0.33      0.63      0.03     -0.24      0.45      0.43      0.70      0.03   [+0.03,+0.54] 409600
+aff_tog                 0.66      0.31      0.40      0.05      0.08      0.07      0.32      0.74      0.02   [-0.00,+0.60] 409600
+jump_surp               0.55      0.30      0.59      0.17     -0.32      0.45      0.40      0.65      0.05   [-0.09,+0.57] 409600
+prac_pick_key           0.70      0.27      0.48      0.21     -0.27      0.18      0.29      0.74      0.00   [-0.09,+0.59] 0
+aff_r2_h                0.30      0.27      0.44      0.19     -0.24      0.48      0.48      0.58      0.02   [+0.06,+0.40] 16384
+z_r2_h                  0.16      0.26      0.37      0.02      0.08      0.29      0.26      0.55      0.04   [+0.08,+0.45] 16384
+prac_open_door          0.53      0.26      0.44      0.17     -0.12      0.08      0.26      0.66      0.03   [-0.07,+0.63] 0
+grad_norm               0.06      0.25     -0.06      0.16      0.40      0.36      0.34      0.56      0.04   [+0.05,+0.48] 51200
+cf_h_door               0.29      0.24      0.02     -0.08      0.38      0.10      0.26      0.72      0.04   [-0.08,+0.55] 16384
+prac_enter_right        0.19      0.23      0.23      0.12      0.11      0.16      0.22      0.56      0.07   [-0.10,+0.55] 0
+grad_cos_unlock         0.06      0.22     -0.01      0.25      0.20      0.20      0.22      0.57      0.03   [+0.06,+0.39] 51200
+aff_r2_h1               0.20      0.21      0.36      0.18     -0.26      0.50      0.50      0.56      0.03   [-0.03,+0.33] 16384
+dv_unlock               0.40      0.20      0.25     -0.14      0.13      0.21      0.20      0.65      0.07   [-0.06,+0.46] 409600
+cf_kl_door              0.25      0.19      0.41     -0.06     -0.19      0.39      0.40      0.59      0.05   [-0.16,+0.38] 16384
+cf_v_door               0.14      0.15      0.27     -0.05     -0.17      0.31      0.25      0.53      0.07   [-0.19,+0.40] 16384
+cka0_h                  0.15      0.15     -0.13     -0.01      0.41      0.21      0.28      0.63      0.01   [-0.06,+0.40] 16384
+z_r2_h1                 0.08      0.14      0.34     -0.02     -0.14      0.15      0.15      0.47      0.05   [-0.07,+0.35] 16384
+cka0_h1                 0.13      0.10     -0.11     -0.11      0.39      0.12      0.19      0.61      0.01   [-0.12,+0.34] 16384
+prac_vloss              0.04      0.09      0.09      0.22     -0.21      0.11      0.10      0.41      0.06   [-0.19,+0.34] 0
+inv_r2_h1              -0.08      0.08      0.15      0.04     -0.05      0.03      0.10      0.43      0.03   [-0.09,+0.27] 16384
+inv_r2_h               -0.00      0.08      0.22      0.05     -0.15      0.20      0.13      0.47      0.01   [-0.14,+0.29] 16384
+futile                  0.14      0.07     -0.11      0.05      0.26      0.05      0.10      0.59      0.05   [-0.10,+0.31] 409600
+cf_kl_carry            -0.04      0.04      0.17      0.12     -0.27      0.19      0.13      0.46      0.02   [-0.22,+0.25] 16384
+aff_drop               -0.18      0.04     -0.14      0.16      0.18     -0.11      0.04      0.46      0.02   [-0.31,+0.36] 409600
+cf_h_obj               -0.05      0.04      0.19      0.14     -0.29      0.17      0.15      0.44      0.02   [-0.20,+0.20] 16384
+cf_kl_ctrl             -0.06      0.03      0.13     -0.05     -0.14      0.20      0.10      0.48      0.03   [-0.27,+0.29] 16384
+ent                     0.09      0.03     -0.19      0.02      0.28     -0.01      0.02      0.55     -0.00   [-0.17,+0.27] 16384
+prac_ent                0.07      0.02     -0.19      0.01      0.29     -0.02      0.01      0.54     -0.00   [-0.17,+0.27] 0
+v_mean                 -0.13      0.02      0.05      0.07     -0.21      0.14      0.05      0.46      0.05   [-0.28,+0.27] 16384
+drift2                  0.01     -0.01      0.23     -0.01     -0.34      0.12      0.04      0.48      0.02   [-0.25,+0.16] 16384
+drift1                  0.00     -0.02      0.25     -0.03     -0.34      0.04      0.00      0.47      0.02   [-0.25,+0.15] 16384
+cf_kl_obj              -0.05     -0.03      0.19      0.15     -0.39      0.07     -0.02      0.40      0.03   [-0.28,+0.21] 16384
+cf_h_carry             -0.04     -0.03      0.12      0.07     -0.29     -0.15     -0.02      0.44      0.01   [-0.29,+0.18] 16384
+grad_cos               -0.07     -0.04      0.06     -0.08     -0.04      0.01     -0.04      0.49      0.02   [-0.26,+0.18] 51200
+cf_h_ctrl               0.06     -0.06     -0.19     -0.11      0.24     -0.19     -0.18      0.55      0.00   [-0.24,+0.17] 16384
+cf_v_ctrl               0.02     -0.06      0.19     -0.09     -0.38      0.02     -0.06      0.42      0.01   [-0.39,+0.25] 16384
+cf_kl_front            -0.09     -0.07      0.16      0.04     -0.36     -0.09     -0.12      0.43      0.00   [-0.31,+0.14] 16384
+practice_sr            -0.20     -0.08      0.09     -0.04     -0.22      0.04     -0.09      0.42      0.03   [-0.35,+0.19] 0
+aff_sel                 0.01     -0.08      0.26      0.02     -0.38     -0.05     -0.09      0.42      0.02   [-0.37,+0.16] 409600
+fut_r2_h               -0.09     -0.09      0.25     -0.14     -0.24     -0.02     -0.09      0.39      0.01   [-0.29,+0.14] 16384
+cf_h_front             -0.03     -0.09      0.14      0.12     -0.47     -0.23     -0.14      0.41      0.00   [-0.35,+0.15] 16384
+plast50                -0.12     -0.10      0.12     -0.11     -0.28     -0.19     -0.22      0.42      0.02   [-0.33,+0.08] 16384
+v_std                  -0.03     -0.15      0.20     -0.13     -0.48     -0.11     -0.18      0.39     -0.03   [-0.46,+0.19] 16384
+fut_r2_h1              -0.14     -0.15      0.18     -0.13     -0.31     -0.11     -0.15      0.36      0.02   [-0.38,+0.13] 16384
+cf_v_carry             -0.15     -0.17      0.17     -0.18     -0.39     -0.15     -0.20      0.33     -0.03   [-0.49,+0.17] 16384
+cf_v_front             -0.05     -0.18      0.19     -0.21     -0.42     -0.13     -0.20      0.37     -0.03   [-0.47,+0.16] 16384
+plast200               -0.25     -0.19      0.02     -0.05     -0.33     -0.15     -0.24      0.37      0.02   [-0.42,+0.05] 16384
+aff_pick               -0.22     -0.33      0.06     -0.13     -0.44     -0.37     -0.37      0.33      0.01   [-0.57,-0.02] 409600
+dv_mean                -0.24     -0.40     -0.07     -0.29     -0.31     -0.29     -0.41      0.40     -0.02   [-0.60,-0.13] 409600
+plast10                -0.45     -0.49     -0.18     -0.39     -0.27     -0.47     -0.50      0.32      0.01   [-0.63,-0.31] 16384
+== held-out practice (8 new tasks x 3 steps)
+open_surp          test=+0.88 D=+0.48 L=+0.06 O=+0.89 within_step=+0.85
+open_rr            test=+0.79 D=+0.54 L=-0.00 O=+0.73 within_step=+0.83
+mix_ev_logreach    test=+0.77 D=+0.67 L=-0.18 O=+0.55 within_step=+0.72
+prac_open_door     test=+0.77 D=+0.31 L=-0.01 O=+0.79 within_step=+0.83
+mix_logreach       test=+0.75 D=+0.65 L=-0.19 O=+0.52 within_step=+0.68
+mix_rr             test=+0.67 D=+0.70 L=-0.14 O=+0.37 within_step=+0.58
+ds_full_dev        test=+0.67 D=+0.81 L=-0.25 O=+0.39 within_step=+0.54
+right              test=+0.62 D=+0.55 L=-0.13 O=+0.50 within_step=+0.74
+door               test=+0.61 D=+0.45 L=-0.30 O=+0.46 within_step=+0.65
+jump_logreach      test=+0.61 D=+0.73 L=-0.19 O=+0.29 within_step=+0.57
+aff_fwd            test=+0.55 D=+0.17 L=+0.33 O=+0.55 within_step=+0.61
+cf_h_door          test=+0.54 D=+0.25 L=-0.29 O=+0.53 within_step=+0.34
+mix_surp           test=+0.54 D=+0.60 L=-0.08 O=+0.26 within_step=+0.60
+futile             test=+0.48 D=+0.11 L=-0.36 O=+0.49 within_step=+0.56
+prac_enter_right   test=+0.46 D=+0.11 L=+0.21 O=+0.51 within_step=+0.52
+jump_rr            test=+0.43 D=+0.67 L=-0.27 O=+0.10 within_step=+0.50
+ev_logreach        test=+0.41 D=+0.12 L=-0.05 O=+0.48 within_step=+0.74
+cf_kl_door         test=+0.41 D=+0.44 L=-0.02 O=+0.22 within_step=+0.51
+z_logreach         test=+0.40 D=+0.16 L=-0.09 O=+0.44 within_step=+0.65
+ev_lift            test=+0.39 D=+0.12 L=-0.03 O=+0.45 within_step=+0.74
+dv_unlock          test=+0.38 D=+0.18 L=+0.21 O=+0.34 within_step=+0.29
+z_rr               test=+0.37 D=+0.45 L=-0.16 O=+0.25 within_step=+0.53
+mix_depth          test=+0.34 D=+0.62 L=-0.14 O=+0.00 within_step=+0.39
+jump_depth         test=+0.33 D=+0.63 L=-0.23 O=-0.03 within_step=+0.44
+cf_v_door          test=+0.33 D=+0.50 L=-0.24 O=+0.08 within_step=+0.31
+== frozen protocol (top-5 by dev-task rho on dev practice): dev, test, held-out test, held-out within-step
+   mix_logreach       +0.90 +0.63 +0.75 +0.68
+   mix_ev_logreach    +0.88 +0.64 +0.77 +0.72
+   jump_logreach      +0.87 +0.56 +0.61 +0.57
+   mix_rr             +0.87 +0.64 +0.67 +0.58
+   lp250              +0.86 +0.53 +0.26 +0.41
+== family gain correlation D/L/O:
+[[ 1.   -0.09  0.02]
+ [-0.09  1.    0.32]
+ [ 0.02  0.32  1.  ]]
+   within-step {'D-L': np.float64(0.04542124542124542), 'D-O': np.float64(0.03956043956043955), 'L-O': np.float64(0.17435897435897438)}
+== family-relevant reach (rows D/L/O events) vs family test gain:
+[[ 0.64  0.02  0.07]
+ [-0.2   0.52  0.42]
+ [-0.04  0.36  0.63]]
+   sweep eps=0.0 E=512 eps_per_env=4 cost=409600: rr +0.53 logreach +0.46
+   sweep eps=0.1 E=512 eps_per_env=4 cost=409600: rr +0.50 logreach +0.54
+   sweep eps=0.25 E=512 eps_per_env=4 cost=409600: rr +0.59 logreach +0.60
+   sweep eps=0.5 E=512 eps_per_env=4 cost=409600: rr +0.64 logreach +0.62
+   sweep eps=0.75 E=512 eps_per_env=4 cost=409600: rr +0.62 logreach +0.57
+   sweep eps=0.9 E=512 eps_per_env=4 cost=409600: rr +0.44 logreach +0.51
+   sweep eps=0.5 E=16 eps_per_env=1 cost=3200: rr +0.64 logreach +0.59
+   sweep eps=0.5 E=64 eps_per_env=1 cost=12800: rr +0.65 logreach +0.59
+   sweep eps=0.5 E=128 eps_per_env=2 cost=51200: rr +0.64 logreach +0.59
+== stopping rule test: oracle=+0.060 random step=+0.026 always 2M=+0.017 mix_logreach=+0.051 mix_rr=+0.035 lp50=+0.043 occ_ent=+0.046 door=+0.036
+== stopping rule D_test: oracle=+0.075 random step=+0.032 always 2M=+0.035 mix_logreach=+0.058 mix_rr=+0.047 lp50=+0.048 occ_ent=+0.050 door=+0.048
+== stopping rule L_test: oracle=+0.052 random step=+0.015 always 2M=+0.013 mix_logreach=+0.022 mix_rr=+0.035 lp50=+0.037 occ_ent=+0.013 door=+0.025
+== stopping rule O_test: oracle=+0.119 random step=+0.027 always 2M=-0.010 mix_logreach=+0.067 mix_rr=+0.013 lp50=+0.040 occ_ent=+0.073 door=+0.025
+== forecast 50k->2M D_test: mix_logreach=-0.03 mix_rr=-0.32 lp50=-0.46 occ_ent=-0.24 door=+0.39 practice_sr=-0.64
+== forecast 50k->2M L_test: mix_logreach=+0.27 mix_rr=+0.13 lp50=+0.40 occ_ent=+0.37 door=+0.17 practice_sr=-0.24
+== forecast 50k->2M O_test: mix_logreach=-0.09 mix_rr=+0.16 lp50=+0.23 occ_ent=-0.23 door=+0.10 practice_sr=+0.37
+== select ('test', 'mix_logreach', 250000): rho=+0.31 picked=+0.067 oracle=+0.092 random=+0.033 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('test', 'mix_logreach', 1000000): rho=+0.39 picked=+0.053 oracle=+0.136 random=+0.036 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('test', 'mix_rr', 250000): rho=+0.13 picked=+0.067 oracle=+0.092 random=+0.033 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('test', 'mix_rr', 1000000): rho=+0.22 picked=+0.053 oracle=+0.136 random=+0.036 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('test', 'rel_D', 250000): rho=+0.43 picked=+0.067 oracle=+0.092 random=+0.033 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('test', 'rel_D', 1000000): rho=+0.43 picked=+0.053 oracle=+0.136 random=+0.036 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('test', 'rel_O', 250000): rho=+0.12 picked=+0.060 oracle=+0.092 random=+0.033 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('test', 'rel_O', 1000000): rho=+0.23 picked=+0.105 oracle=+0.136 random=+0.036 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('test', 'practice_sr', 250000): rho=-0.37 picked=+0.014 oracle=+0.092 random=+0.033 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('test', 'practice_sr', 1000000): rho=-0.25 picked=+0.027 oracle=+0.136 random=+0.036 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('test', 'lp50', 250000): rho=+0.04 picked=+0.044 oracle=+0.092 random=+0.033 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('test', 'lp50', 1000000): rho=+0.21 picked=+0.086 oracle=+0.136 random=+0.036 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('test', 'door', 250000): rho=+0.56 picked=+0.067 oracle=+0.092 random=+0.033 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('test', 'door', 1000000): rho=+0.47 picked=+0.053 oracle=+0.136 random=+0.036 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('D_test', 'mix_logreach', 250000): rho=+0.07 picked=+0.069 oracle=+0.112 random=+0.044 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('D_test', 'mix_logreach', 1000000): rho=-0.04 picked=+0.056 oracle=+0.140 random=+0.043 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('D_test', 'mix_rr', 250000): rho=-0.11 picked=+0.069 oracle=+0.112 random=+0.044 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('D_test', 'mix_rr', 1000000): rho=-0.16 picked=+0.056 oracle=+0.140 random=+0.043 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('D_test', 'rel_D', 250000): rho=+0.26 picked=+0.069 oracle=+0.112 random=+0.044 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('D_test', 'rel_D', 1000000): rho=+0.19 picked=+0.056 oracle=+0.140 random=+0.043 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('D_test', 'rel_O', 250000): rho=-0.24 picked=+0.031 oracle=+0.112 random=+0.044 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('D_test', 'rel_O', 1000000): rho=-0.18 picked=+0.032 oracle=+0.140 random=+0.043 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('D_test', 'practice_sr', 250000): rho=-0.60 picked=+0.008 oracle=+0.112 random=+0.044 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('D_test', 'practice_sr', 1000000): rho=-0.61 picked=+0.015 oracle=+0.140 random=+0.043 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('D_test', 'lp50', 250000): rho=-0.15 picked=+0.023 oracle=+0.112 random=+0.044 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('D_test', 'lp50', 1000000): rho=-0.16 picked=+0.032 oracle=+0.140 random=+0.043 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('D_test', 'door', 250000): rho=+0.43 picked=+0.069 oracle=+0.112 random=+0.044 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('D_test', 'door', 1000000): rho=+0.33 picked=+0.056 oracle=+0.140 random=+0.043 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('L_test', 'mix_logreach', 250000): rho=+0.43 picked=+0.002 oracle=+0.125 random=+0.012 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('L_test', 'mix_logreach', 1000000): rho=+0.28 picked=+0.001 oracle=+0.131 random=+0.023 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('L_test', 'mix_rr', 250000): rho=+0.41 picked=+0.002 oracle=+0.125 random=+0.012 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('L_test', 'mix_rr', 1000000): rho=+0.18 picked=+0.001 oracle=+0.131 random=+0.023 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('L_test', 'rel_D', 250000): rho=+0.21 picked=+0.002 oracle=+0.125 random=+0.012 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('L_test', 'rel_D', 1000000): rho=+0.16 picked=+0.001 oracle=+0.131 random=+0.023 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('L_test', 'rel_O', 250000): rho=+0.21 picked=+0.011 oracle=+0.125 random=+0.012 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('L_test', 'rel_O', 1000000): rho=+0.33 picked=+0.081 oracle=+0.131 random=+0.023 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('L_test', 'practice_sr', 250000): rho=+0.33 picked=-0.010 oracle=+0.125 random=+0.012 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('L_test', 'practice_sr', 1000000): rho=+0.12 picked=-0.002 oracle=+0.131 random=+0.023 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('L_test', 'lp50', 250000): rho=+0.53 picked=+0.073 oracle=+0.125 random=+0.012 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('L_test', 'lp50', 1000000): rho=+0.48 picked=+0.130 oracle=+0.131 random=+0.023 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('L_test', 'door', 250000): rho=+0.12 picked=+0.002 oracle=+0.125 random=+0.012 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('L_test', 'door', 1000000): rho=+0.03 picked=+0.001 oracle=+0.131 random=+0.023 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('O_test', 'mix_logreach', 250000): rho=+0.18 picked=+0.128 oracle=+0.280 random=+0.035 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('O_test', 'mix_logreach', 1000000): rho=+0.36 picked=+0.100 oracle=+0.375 random=+0.034 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('O_test', 'mix_rr', 250000): rho=+0.07 picked=+0.128 oracle=+0.280 random=+0.035 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('O_test', 'mix_rr', 1000000): rho=+0.38 picked=+0.100 oracle=+0.375 random=+0.034 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('O_test', 'rel_D', 250000): rho=+0.33 picked=+0.128 oracle=+0.280 random=+0.035 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('O_test', 'rel_D', 1000000): rho=+0.38 picked=+0.100 oracle=+0.375 random=+0.034 n=22 [np.str_('k:open_door'), np.str_('face_door'), np.str_('pick_key')]
+== select ('O_test', 'rel_O', 250000): rho=+0.18 picked=+0.162 oracle=+0.280 random=+0.035 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('O_test', 'rel_O', 1000000): rho=+0.39 picked=+0.256 oracle=+0.375 random=+0.034 n=22 [np.str_('o:explore'), np.str_('o:enter_right'), np.str_('explore')]
+== select ('O_test', 'practice_sr', 250000): rho=-0.26 picked=+0.048 oracle=+0.280 random=+0.035 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('O_test', 'practice_sr', 1000000): rho=+0.14 picked=+0.077 oracle=+0.375 random=+0.034 n=22 [np.str_('face_box'), np.str_('pick_ball'), np.str_('face_door')]
+== select ('O_test', 'lp50', 250000): rho=-0.12 picked=+0.053 oracle=+0.280 random=+0.035 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('O_test', 'lp50', 1000000): rho=+0.29 picked=+0.136 oracle=+0.375 random=+0.034 n=22 [np.str_('impact'), np.str_('explore'), np.str_('o:explore')]
+== select ('O_test', 'door', 250000): rho=+0.47 picked=+0.128 oracle=+0.280 random=+0.035 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== select ('O_test', 'door', 1000000): rho=+0.34 picked=+0.100 oracle=+0.375 random=+0.034 n=22 [np.str_('k:open_door'), np.str_('pick_key'), np.str_('face_door')]
+== early (50k, 3 door tasks, 18 runs): scratch AUC {'goal': np.float64(0.255), 'key_near_goal': np.float64(0.212), 'close_from_right': np.float64(0.299)}
+   pick_key       full      gain=+0.376 se=0.038 p=2.2e-11
+   key_near_ball  full      gain=+0.350 se=0.032 p=5.61e-12
+   open_door      full      gain=+0.340 se=0.037 p=1.4e-10
+   key_right      full      gain=+0.322 se=0.033 p=3.89e-10
+   ball_near_door full      gain=+0.274 se=0.030 p=1.37e-08
+   close_door     full      gain=+0.266 se=0.039 p=4.76e-07
+   face_door      full      gain=+0.203 se=0.037 p=4.76e-05
+   mix            full      gain=+0.184 se=0.039 p=0.000505
+   pick_key       nocritic  gain=+0.153 se=0.042 p=0.00322
+   face_door      nocritic  gain=+0.147 se=0.038 p=0.00408
+   impact         full      gain=+0.121 se=0.038 p=0.0223
+   open_door      nocritic  gain=+0.095 se=0.036 p=0.0486
+   ball_near_box  full      gain=+0.088 se=0.035 p=0.0772
+   mix            nocritic  gain=+0.061 se=0.036 p=0.279
+   key_near_ball  nocritic  gain=+0.046 se=0.035 p=0.353
+   enter_right    full      gain=+0.043 se=0.037 p=0.478
+   close_door     nocritic  gain=+0.039 se=0.032 p=0.322
+   explore        nocritic  gain=+0.033 se=0.036 p=0.49
+   impact         nocritic  gain=+0.033 se=0.038 p=0.589
+   enter_right    nocritic  gain=+0.028 se=0.036 p=0.758
+   ball_near_box  nocritic  gain=+0.021 se=0.037 p=0.807
+   ball_near_door nocritic  gain=+0.016 se=0.036 p=0.811
+   key_right      nocritic  gain=+0.009 se=0.036 p=0.916
+   pick_box       nocritic  gain=-0.016 se=0.033 p=0.721
+   pick_ball      nocritic  gain=-0.022 se=0.035 p=0.612
+   explore        full      gain=-0.185 se=0.022 p=8.39e-07
+   pick_box       full      gain=-0.244 se=0.007 p=2.03e-11
+   pick_ball      full      gain=-0.254 se=0.005 p=3.4e-12
+== rehearsal 50k GT=full     door             after=+0.85 before=+0.43
+== rehearsal 50k GT=full     mix_logreach     after=+0.46 before=-0.05
+== rehearsal 50k GT=full     mix_ev_logreach  after=+0.27 before=-0.03
+== rehearsal 50k GT=full     rel_D            after=+0.53 before=+nan
+== rehearsal 50k GT=nocritic door             after=+0.53 before=+0.68
+== rehearsal 50k GT=nocritic mix_logreach     after=-0.34 before=+0.45
+== rehearsal 50k GT=nocritic mix_ev_logreach  after=-0.18 before=+0.45
+== rehearsal 50k GT=nocritic rel_D            after=-0.25 before=+nan
+== pretraining objectives (critic reset gains; full_door = full transfer on 3 door tasks)
+   ball_near_box    250k D=-0.047 L=+0.138 O=+0.029 test=+0.050 frontier=+0.00 full_door=+nan
+   ball_near_door   250k D=-0.065 L=-0.097 O=+0.048 test=+0.008 frontier=-2.33 full_door=+nan
+   close_door       250k D=+0.194 L=-0.034 O=-0.000 test=+0.032 frontier=+2.00 full_door=+nan
+   cover            250k D=+0.222 L=+0.032 O=+0.189 test=+0.137 frontier=+3.33 full_door=+0.649
+   cover_pos        250k D=+0.122 L=+0.094 O=+0.141 test=+0.118 frontier=+2.33 full_door=+0.444
+   enter_right      250k D=+0.184 L=-0.003 O=+0.096 test=+0.086 frontier=+2.33 full_door=+0.593
+   explore          250k D=-0.024 L=+0.034 O=-0.029 test=+0.007 frontier=-1.00 full_door=-0.255
+   face_door        250k D=+0.042 L=+0.012 O=+0.221 test=+0.092 frontier=+1.33 full_door=+nan
+   impact           250k D=-0.003 L=+0.184 O=-0.002 test=+0.045 frontier=+0.67 full_door=-0.123
+   key_near_ball    250k D=+0.042 L=+0.019 O=-0.041 test=-0.014 frontier=-0.33 full_door=+nan
+   key_right        250k D=+0.160 L=-0.017 O=+0.094 test=+0.078 frontier=+2.00 full_door=+nan
+   mix              250k D=+0.074 L=+0.087 O=+0.031 test=+0.055 frontier=+0.67 full_door=+nan
+   open_door        250k D=+0.205 L=-0.006 O=+0.000 test=+0.036 frontier=+1.33 full_door=+0.612
+   pick_ball        250k D=-0.048 L=-0.128 O=-0.042 test=-0.017 frontier=-3.33 full_door=+nan
+   pick_box         250k D=-0.030 L=+0.001 O=-0.059 test=-0.027 frontier=-1.67 full_door=+nan
+   pick_key         250k D=+0.129 L=-0.017 O=-0.051 test=+0.018 frontier=+1.67 full_door=+nan
+   smm              250k D=+0.012 L=+0.007 O=+0.012 test=+0.016 frontier=+0.67 full_door=-0.255
+   ball_near_box   1000k D=-0.039 L=+0.055 O=+0.020 test=+0.033 frontier=+0.00 full_door=+nan
+   ball_near_door  1000k D=-0.073 L=-0.112 O=-0.026 test=-0.010 frontier=-3.00 full_door=+nan
+   close_door      1000k D=+0.158 L=-0.069 O=-0.078 test=-0.012 frontier=+0.00 full_door=+nan
+   cover           1000k D=+0.463 L=+0.106 O=+0.295 test=+0.315 frontier=+6.67 full_door=+0.658
+   cover_pos       1000k D=+0.315 L=+0.101 O=+0.391 test=+0.283 frontier=+4.33 full_door=+0.654
+   enter_right     1000k D=+0.277 L=-0.017 O=-0.025 test=+0.075 frontier=+2.67 full_door=+0.620
+   explore         1000k D=-0.048 L=+0.114 O=-0.007 test=+0.023 frontier=+0.00 full_door=-0.255
+   face_door       1000k D=+0.062 L=+0.004 O=+0.215 test=+0.117 frontier=+2.67 full_door=+nan
+   impact          1000k D=-0.001 L=+0.200 O=+0.002 test=+0.068 frontier=+0.67 full_door=-0.246
+   key_near_ball   1000k D=+0.036 L=-0.044 O=-0.009 test=+0.001 frontier=+0.33 full_door=+nan
+   key_right       1000k D=+0.227 L=-0.043 O=-0.042 test=+0.052 frontier=+2.00 full_door=+nan
+   mix             1000k D=+0.164 L=+0.119 O=+0.048 test=+0.078 frontier=+3.33 full_door=+nan
+   open_door       1000k D=+0.240 L=-0.050 O=-0.059 test=+0.035 frontier=+1.67 full_door=+0.423
+   pick_ball       1000k D=-0.040 L=-0.157 O=-0.069 test=-0.037 frontier=-2.67 full_door=+nan
+   pick_box        1000k D=-0.040 L=-0.044 O=-0.042 test=-0.018 frontier=-1.33 full_door=+nan
+   pick_key        1000k D=+0.102 L=-0.086 O=-0.097 test=-0.027 frontier=-0.33 full_door=+nan
+   smm             1000k D=+0.072 L=-0.000 O=+0.082 test=+0.050 frontier=+2.33 full_door=-0.255
+   ball_near_box   2000k D=-0.087 L=+0.021 O=+0.013 test=+0.017 frontier=-1.33 full_door=+nan
+   ball_near_door  2000k D=-0.022 L=-0.140 O=+0.045 test=+0.013 frontier=-1.67 full_door=+nan
+   close_door      2000k D=+0.143 L=-0.028 O=-0.069 test=+0.013 frontier=+1.67 full_door=+nan
+   cover           2000k D=+0.620 L=+0.139 O=+0.352 test=+0.432 frontier=+9.33 full_door=+0.677
+   cover_pos       2000k D=+0.393 L=+0.103 O=+0.418 test=+0.330 frontier=+6.00 full_door=+0.667
+   enter_right     2000k D=+0.245 L=-0.050 O=-0.085 test=+0.031 frontier=+1.67 full_door=+0.587
+   explore         2000k D=-0.034 L=+0.100 O=-0.084 test=-0.006 frontier=-1.67 full_door=-0.255
+   face_door       2000k D=-0.009 L=-0.074 O=+0.139 test=+0.040 frontier=+0.33 full_door=+nan
+   impact          2000k D=-0.031 L=+0.203 O=-0.011 test=+0.046 frontier=-0.33 full_door=-0.254
+   key_near_ball   2000k D=+0.029 L=-0.069 O=+0.001 test=-0.005 frontier=+0.33 full_door=+nan
+   key_right       2000k D=+0.189 L=-0.058 O=-0.035 test=+0.038 frontier=+2.33 full_door=+nan
+   mix             2000k D=+0.130 L=+0.130 O=-0.008 test=+0.056 frontier=+2.33 full_door=+nan
+   open_door       2000k D=+0.239 L=-0.027 O=-0.052 test=+0.043 frontier=+1.33 full_door=+0.561
+   pick_ball       2000k D=-0.060 L=-0.126 O=-0.023 test=-0.024 frontier=-3.00 full_door=+nan
+   pick_box        2000k D=-0.054 L=-0.002 O=-0.080 test=-0.035 frontier=-2.67 full_door=+nan
+   pick_key        2000k D=+0.059 L=-0.072 O=-0.033 test=+0.013 frontier=+0.67 full_door=+nan
+   smm             2000k D=+0.060 L=-0.019 O=-0.035 test=-0.015 frontier=+0.33 full_door=-0.255

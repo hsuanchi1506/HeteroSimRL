@@ -1,0 +1,6 @@
+  it 0/244 steps/run 8192 mean_sr 0.163 fps 575380
+  it 50/244 steps/run 417792 mean_sr 0.768 fps 1429515
+  it 100/244 steps/run 827392 mean_sr 0.830 fps 1453885
+  it 150/244 steps/run 1236992 mean_sr 0.833 fps 1462180
+  it 200/244 steps/run 1646592 mean_sr 0.837 fps 1469973
+  it 243/244 steps/run 1998848 mean_sr 0.836 fps 1471672

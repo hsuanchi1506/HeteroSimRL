@@ -1,0 +1,29 @@
+step2 practice success vs held-out gain (14 practice tasks x 6 checkpoints): rho -0.08
+step2 practice success vs held-out gain (8 held-out practice tasks x 3 checkpoints): rho +0.02
+step3 coverage vs held-out gain (14 practice tasks x 6 checkpoints): rho +0.63
+step3 coverage vs held-out gain (8 held-out practice tasks x 3 checkpoints): rho +0.75
+step3 metric practice success                 rho -0.08 ci [-0.35, +0.19] cost 0 env steps
+step3 metric policy entropy                   rho +0.03 ci [-0.17, +0.27] cost 16k states
+step3 metric representation probe             rho +0.26 ci [+0.08, +0.45] cost 16k states
+step3 metric short learning probe             rho +0.61 ci [+0.30, +0.83] cost 300k env steps + gradients
+step3 metric finetune on 8 dev tasks          rho +0.55 ci [+0.34, +0.70] cost 16M env steps
+step3 metric coverage (50% random actions)    rho +0.63 ci [+0.42, +0.80] cost 409.6k env steps, no gradients; 3.2k gives rho 0.59
+step3 stopping rule: oracle +0.060 coverage peak +0.051 random step +0.026 always 2M +0.017
+step4 door-open rate without task reward coverage                     250k=0.62 1000k=0.75 2000k=0.94
+step4 door-open rate without task reward coverage, no door variable   250k=0.09 1000k=0.39 2000k=0.52
+step4 door-open rate without task reward SMM                          250k=0.05 1000k=0.09 2000k=0.08
+step4 door-open rate without task reward impact (new configs)         250k=0.00 1000k=0.00 2000k=0.00
+step4 door-open rate without task reward explore (new cells)          250k=0.00 1000k=0.00 2000k=0.00
+step4 coverage                     held-out gain +0.432 extra tasks learned +9.33
+step4 coverage, no door variable   held-out gain +0.330 extra tasks learned +6.00
+step4 best hand-designed practice  held-out gain +0.117 extra tasks learned +3.33
+step4 impact (new configs)         held-out gain +0.046 extra tasks learned -0.33
+step4 explore (new cells)          held-out gain -0.006 extra tasks learned -1.67
+step4 SMM                          held-out gain -0.015 extra tasks learned +0.33
+step4 task open_with_ball   scratch 0.00 best-of-252 0.25 coverage 0.89
+step4 task pick_ball2       scratch 0.00 best-of-252 0.33 coverage 0.95
+step4 task ball2_left       scratch 0.00 best-of-252 0.00 coverage 0.85
+step4 task ball_right       scratch 0.00 best-of-252 0.00 coverage 0.50
+step4 task box_right        scratch 0.00 best-of-252 0.00 coverage 0.52
+step4 task ball2_near_goal  scratch 0.00 best-of-252 0.00 coverage 0.45
+step4 task goal_with_ball   scratch 0.00 best-of-252 0.00 coverage 0.00

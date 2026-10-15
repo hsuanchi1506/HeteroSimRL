@@ -1,0 +1,33 @@
+== zero-shot greedy success > 5% cells: 1 of 165
+== frontier F(K) (11 downstream tasks, tau=0.8, full transfer)
+   enter_right     F(1M)=0.36 F(3M)=0.36 F(6M)=0.36
+   open_door       F(1M)=0.30 F(3M)=0.33 F(6M)=0.36
+   key_right       F(1M)=0.27 F(3M)=0.33 F(6M)=0.36
+   close_door      F(1M)=0.18 F(3M)=0.24 F(6M)=0.27
+   mix             F(1M)=0.15 F(3M)=0.15 F(6M)=0.15
+   pick_key        F(1M)=0.03 F(3M)=0.12 F(6M)=0.18
+   impact          F(1M)=0.00 F(3M)=0.03 F(6M)=0.18
+   key_near_ball   F(1M)=0.00 F(3M)=0.03 F(6M)=0.12
+   explore         F(1M)=0.00 F(3M)=0.00 F(6M)=0.06
+   ball_near_box   F(1M)=0.00 F(3M)=0.00 F(6M)=0.18
+   pick_ball       F(1M)=0.00 F(3M)=0.00 F(6M)=0.06
+   pick_box        F(1M)=0.00 F(3M)=0.00 F(6M)=0.03
+   face_door       F(1M)=0.00 F(3M)=0.00 F(6M)=0.00
+   ball_near_door  F(1M)=0.00 F(3M)=0.00 F(6M)=0.00
+   scratch         F(1M)=0.00 F(3M)=0.20 F(6M)=0.34 F(8M)=0.34
+== break-even downstream tasks N* (scratch steps/task 2.91M)
+   enter_right     steps/task 0.32M  N*=0.77
+   open_door       steps/task 0.72M  N*=0.91
+   key_right       steps/task 1.04M  N*=1.07
+   close_door      steps/task 2.50M  N*=4.79
+   mix             steps/task 4.07M  N*=inf
+   pick_key        steps/task 4.24M  N*=inf
+   impact          steps/task 5.16M  N*=inf
+   key_near_ball   steps/task 5.34M  N*=inf
+   explore         steps/task 5.62M  N*=inf
+   ball_near_box   steps/task 5.75M  N*=inf
+   pick_ball       steps/task 5.90M  N*=inf
+   pick_box        steps/task 5.96M  N*=inf
+   face_door       steps/task 6.00M  N*=inf
+   ball_near_door  steps/task 6.00M  N*=inf
+== compute: {'gpu_runs': 5286, 'gpu_env_steps': 28850872320, 'gpu_wall_hours_summed': 6.5361101097530785, 'minigrid_cpu_env_steps': 159907840}

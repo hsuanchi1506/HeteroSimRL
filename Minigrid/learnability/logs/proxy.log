@@ -1,0 +1,16 @@
+[proxy] chunk 1/4
+  it 0/61 steps/run 8192 mean_sr 0.271 fps 744045
+  it 50/61 steps/run 417792 mean_sr 0.488 fps 925173
+  it 60/61 steps/run 499712 mean_sr 0.515 fps 926622
+[proxy] chunk 2/4
+  it 0/61 steps/run 8192 mean_sr 0.298 fps 914750
+  it 50/61 steps/run 417792 mean_sr 0.528 fps 931963
+  it 60/61 steps/run 499712 mean_sr 0.550 fps 931784
+[proxy] chunk 3/4
+  it 0/61 steps/run 8192 mean_sr 0.286 fps 913926
+  it 50/61 steps/run 417792 mean_sr 0.501 fps 1003931
+  it 60/61 steps/run 499712 mean_sr 0.533 fps 1006951
+[proxy] chunk 4/4
+  it 0/61 steps/run 8192 mean_sr 0.311 fps 991751
+  it 50/61 steps/run 417792 mean_sr 0.687 fps 998886
+  it 60/61 steps/run 499712 mean_sr 0.707 fps 998507

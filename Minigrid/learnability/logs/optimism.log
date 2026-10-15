@@ -1,0 +1,17 @@
+[optimism] chunk 1/1
+  it 0/732 steps/run 8192 mean_sr 0.018 fps 929968
+  it 50/732 steps/run 417792 mean_sr 0.203 fps 1023696
+  it 100/732 steps/run 827392 mean_sr 0.245 fps 1052597
+  it 150/732 steps/run 1236992 mean_sr 0.289 fps 1043211
+  it 200/732 steps/run 1646592 mean_sr 0.306 fps 1038873
+  it 250/732 steps/run 2056192 mean_sr 0.323 fps 1036783
+  it 300/732 steps/run 2465792 mean_sr 0.344 fps 1035647
+  it 350/732 steps/run 2875392 mean_sr 0.373 fps 1035373
+  it 400/732 steps/run 3284992 mean_sr 0.388 fps 1034947
+  it 450/732 steps/run 3694592 mean_sr 0.390 fps 1034584
+  it 500/732 steps/run 4104192 mean_sr 0.396 fps 1034455
+  it 550/732 steps/run 4513792 mean_sr 0.398 fps 1034417
+  it 600/732 steps/run 4923392 mean_sr 0.404 fps 1034486
+  it 650/732 steps/run 5332992 mean_sr 0.411 fps 1034588
+  it 700/732 steps/run 5742592 mean_sr 0.414 fps 1034621
+  it 731/732 steps/run 5996544 mean_sr 0.413 fps 1037308

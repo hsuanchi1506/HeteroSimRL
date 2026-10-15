@@ -1,0 +1,7 @@
+sphinx
+sphinx-notfound-page
+myst-parser
+celshast
+moviepy
+pygame
+sphinx_github_changelog

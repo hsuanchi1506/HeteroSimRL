@@ -1,0 +1,23 @@
+  it 0/244 steps/run 8192 mean_sr 0.026 fps 106971
+  it 50/244 steps/run 417792 mean_sr 0.386 fps 241846
+  it 100/244 steps/run 827392 mean_sr 0.588 fps 245004
+  it 150/244 steps/run 1236992 mean_sr 0.710 fps 245849
+  it 200/244 steps/run 1646592 mean_sr 0.770 fps 246095
+  it 243/244 steps/run 1998848 mean_sr 0.791 fps 246280
+[doorfree] chunk 1/1
+  it 0/732 steps/run 8192 mean_sr 0.000 fps 1064659
+  it 50/732 steps/run 417792 mean_sr 0.000 fps 1034493
+  it 100/732 steps/run 827392 mean_sr 0.000 fps 926636
+  it 150/732 steps/run 1236992 mean_sr 0.000 fps 879749
+  it 200/732 steps/run 1646592 mean_sr 0.005 fps 858132
+  it 250/732 steps/run 2056192 mean_sr 0.028 fps 846105
+  it 300/732 steps/run 2465792 mean_sr 0.051 fps 837945
+  it 350/732 steps/run 2875392 mean_sr 0.079 fps 832660
+  it 400/732 steps/run 3284992 mean_sr 0.116 fps 828392
+  it 450/732 steps/run 3694592 mean_sr 0.135 fps 825613
+  it 500/732 steps/run 4104192 mean_sr 0.149 fps 844719
+  it 550/732 steps/run 4513792 mean_sr 0.171 fps 857553
+  it 600/732 steps/run 4923392 mean_sr 0.203 fps 866876
+  it 650/732 steps/run 5332992 mean_sr 0.248 fps 876472
+  it 700/732 steps/run 5742592 mean_sr 0.273 fps 890751
+  it 731/732 steps/run 5996544 mean_sr 0.288 fps 894905

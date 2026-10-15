@@ -1,0 +1,16 @@
+  it 0/732 steps/run 8192 mean_sr 0.059 fps 325880
+  it 50/732 steps/run 417792 mean_sr 0.518 fps 488733
+  it 100/732 steps/run 827392 mean_sr 0.759 fps 501265
+  it 150/732 steps/run 1236992 mean_sr 0.816 fps 498465
+  it 200/732 steps/run 1646592 mean_sr 0.838 fps 497814
+  it 250/732 steps/run 2056192 mean_sr 0.868 fps 496998
+  it 300/732 steps/run 2465792 mean_sr 0.880 fps 496446
+  it 350/732 steps/run 2875392 mean_sr 0.906 fps 496272
+  it 400/732 steps/run 3284992 mean_sr 0.926 fps 496006
+  it 450/732 steps/run 3694592 mean_sr 0.940 fps 495822
+  it 500/732 steps/run 4104192 mean_sr 0.951 fps 495566
+  it 550/732 steps/run 4513792 mean_sr 0.958 fps 495490
+  it 600/732 steps/run 4923392 mean_sr 0.962 fps 495492
+  it 650/732 steps/run 5332992 mean_sr 0.963 fps 495284
+  it 700/732 steps/run 5742592 mean_sr 0.962 fps 495173
+  it 731/732 steps/run 5996544 mean_sr 0.965 fps 495070
